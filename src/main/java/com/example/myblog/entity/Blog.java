@@ -1,5 +1,6 @@
 package com.example.myblog.entity;
 
+import com.example.myblog.dto.BlogFormDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,5 +24,12 @@ public class Blog {
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member member;
+
+    public static Blog createBlog(BlogFormDto blogFormDto, Member member){
+        Blog blog = new Blog();
+        blog.setBlogNm(blogFormDto.getBlogNm());
+        blog.setMember(member);
+        return blog;
+    }
 
 }

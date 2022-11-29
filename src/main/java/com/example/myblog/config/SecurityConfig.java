@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -25,12 +26,13 @@ public class SecurityConfig {
                      .and()
                         .logout()
                         .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
-                        .logoutSuccessUrl("/");
+                        .logoutSuccessUrl("/home");
         http.authorizeRequests()
-                .mvcMatchers("/", "/home","/members/**").permitAll()
+                .mvcMatchers("/", "/home","/members/**","/errors/*").permitAll()
                 .anyRequest().authenticated();
         http.exceptionHandling()
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
         return http.build();
     }
 
