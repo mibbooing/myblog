@@ -1,13 +1,88 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout}">
+      layout:decorate="~{layouts/layout_home}">
 
-    <section layout:fragment="content">
-        본문
-        <button type="button" class="btn btn-primary" onClick="location.href='/members/login'">로그인</button>
-        <button type="button" class="btn btn-primary" onClick="location.href='/members/new'">회원가입</button>
-        <button type="button" class="btn btn-primary" onClick="location.href='/blogs/new'">블로그생성</button>
-    </section>
+<section layout:fragment="content" class="section">
+    <wrapper class="home-wrapper">
+        메인
+        <div class="item_list">
+            <div class="item">
+                <div class="info_post">
+                    <div class="author">
+                        <a href="author_blog_link"></a>
+                        <div class="thumbnail_author">
+                            <img src="https://pbs.twimg.com/profile_images/1173873201039806464/R1lWiNES_400x400.jpg"
+                                 alt="블로거 썸네일">
+                        </div>
+                        <div class="info_author">
+                            <em class="name_author">홍길동</em>
+                            <span class="time">1시간전</span>
+                        </div>
+                    </div>
+                    <div class="desc_post">
+                        <a href="post_link" class="desc_title" value="title">이것은 제목이다</a>
+                        <a href="post_link" class="desc_text" value="post_text">이 이야기는 영국의 런던으로부터 시작되어 어쩌구 저쩌구 이러쿵 저러쿵
+                            조잘조잘 속닥속닥 수근이수근 이런얘기인데 사실 다도 그냥 채우려고 쓰는거지 아무 뜻이 없다람뒤썬더볼트랙터미널뛰기름칠월칠석가모니불상팔자식자랑 가나다라마바사아자차가타파하
+                            나랏말싸미 듕귁에 달아 문자와 서로 사맞디아니할세 이런젼탸로 내 어른백성을 위해 새로 스물여섯글자를 맹그노리</a>
+                    </div>
+                    <div class="comments">
+                                <span class="like">공감
+                                    <em>횟수</em>
+                                </span>
+                        <span class="comments">댓글
+                                    <em>갯수</em>
+                                </span>
+                    </div>
+                </div>
+                <div class="thumbnail_post">
+                    <div class="thumbnail_area">
+                        <a href="post_link" class="thumbnail_inner">
+                            <img src="https://pbs.twimg.com/profile_images/1173873201039806464/R1lWiNES_400x400.jpg"
+                                 alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="info_post">
+                    <div class="author">
+                        <a href="author_blog_link"></a>
+                        <div class="thumbnail_author">
+                            <img src="https://pbs.twimg.com/profile_images/1173873201039806464/R1lWiNES_400x400.jpg"
+                                 alt="블로거 썸네일">
+                        </div>
+                        <div class="info_author">
+                            <em class="name_author">홍길동</em>
+                            <span class="time">1시간전</span>
+                        </div>
+                    </div>
+                    <div class="desc_post">
+                        <a href="post_link" class="desc_title" value="title">이것은 제목이다</a>
+                        <a href="post_link" class="desc_text" value="post_text">이 이야기는 영국의 런던으로부터 시작되어 어쩌구 저쩌구 이러쿵 저러쿵
+                            조잘조잘 속닥속닥 수근이수근 이런얘기인데 사실 다도 그냥 채우려고 쓰는거지 아무 뜻이 없다람뒤썬더볼트랙터미널뛰기름칠월칠석가모니불상팔자식자랑 가나다라마바사아자차가타파하
+                            나랏말싸미 듕귁에 달아 문자와 서로 사맞디아니할세 이런젼탸로 내 어른백성을 위해 새로 스물여섯글자를 맹그노리</a>
+                    </div>
+                    <div class="comments">
+                                                <span class="like">공감
+                                                    <em>횟수</em>
+                                                </span>
+                        <span class="comments">댓글
+                                                    <em>갯수</em>
+                                                </span>
+                    </div>
+                </div>
+                <div class="thumbnail_post">
+                    <div class="thumbnail_area">
+                        <a href="post_link" class="thumbnail_inner">
+                            <img src="https://pbs.twimg.com/profile_images/1173873201039806464/R1lWiNES_400x400.jpg"
+                                 alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </wrapper>
+</section>
 
 </html>

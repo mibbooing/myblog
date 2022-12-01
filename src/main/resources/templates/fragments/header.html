@@ -1,9 +1,10 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
     <header th:fragment="header">
-        헤더
-        <button type="button" class="btn_menu" id="btn_menu"><i class="bi bi-list"></i></button>
+        <button type="button" class="btn_home btn_none-style" onclick="location.href='/home'"><i class="bi bi-house" style="font-size: 2rem;"></i></button>
+        <button type="button" class="btn_menu main_menu btn_none-style" id="btn_main_menu"><i class="bi bi-list"  style="font-size: 2rem;"></i></button>
+        <button type="button" class="btn_menu aside_menu btn_none-style" id="btn_aside_menu"><i class="bi bi-list"  style="font-size: 2rem;"></i></button>
     </header>
 
 </html>
