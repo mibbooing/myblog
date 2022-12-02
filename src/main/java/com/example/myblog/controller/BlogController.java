@@ -2,7 +2,10 @@ package com.example.myblog.controller;
 
 import com.example.myblog.dto.BlogFormDto;
 import com.example.myblog.dto.BlogListDto;
+import com.example.myblog.dto.MemberImgDto;
+import com.example.myblog.dto.MemberInfoFormDto;
 import com.example.myblog.service.BlogService;
+import com.example.myblog.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,10 +47,6 @@ public class BlogController {
         return "/home";
     }
 
-    @GetMapping(value = "/myPage")
-    public String myPage(Principal principal, Model model){
-        List<BlogListDto> blogList = blogService.getBlogMyList(principal.getName());
-        model.addAttribute("blogList", blogList);
-        return "blog/myBlogList";
-    }
+
+
 }

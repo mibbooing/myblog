@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="member")
@@ -26,6 +27,7 @@ public class Member {
 
     private String password;
 
+    @NotNull
     private String name;
 
     private String introduction;
@@ -42,5 +44,10 @@ public class Member {
         member.setPassword(password);
         member.setRole(Role.USER);
         return member;
+    }
+
+    public void updateMemberInfo(String name, String introduction){
+        this.name = name;
+        this.introduction = introduction;
     }
 }
