@@ -25,10 +25,15 @@ public class Blog {
     @JoinColumn(name="member_id")
     private Member member;
 
-    public static Blog createBlog(BlogFormDto blogFormDto, Member member){
+    @ManyToOne
+    @JoinColumn(name="topic_id")
+    private Topic topic;
+
+    public static Blog createBlog(BlogFormDto blogFormDto, Member member, Topic topic){
         Blog blog = new Blog();
         blog.setBlogNm(blogFormDto.getBlogNm());
         blog.setMember(member);
+        blog.setTopic(topic);
         return blog;
     }
 

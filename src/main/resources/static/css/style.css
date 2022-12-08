@@ -87,9 +87,9 @@ a:hover {
 .member-wrapper{
     /*margin-top: 13rem;*/
     position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: table-cell;
     vertical-align: middle;
 }
@@ -100,6 +100,28 @@ a:hover {
 .member-wrapper .form_btn{
     width: 100%;
     text-align: center;
+}
+.member-wrapper .member-profile-img{
+    width: 100%;
+    position : relative;
+}
+.member-wrapper .member-profile-img .member-profile-img-inner{
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    max-height: 300px;
+    border-radius: 50%;
+    overflow: hidden;
+    position : relative;
+}
+.member-wrapper .member-profile-img .member-img-input{
+    display: none;
+}
+.member-img-change-btn{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 2rem;
 }
 .home-wrapper{
     background-color: #F2FFf0;

@@ -14,6 +14,9 @@
                 <a href="/members/login">로그인</a>
             </li>
             <li sec:authorize="isAuthenticated()">
+                <a href="/members/myPage">마이페이지</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
                 <a href="/members/logout">로그아웃</a>
             </li>
         </ul>

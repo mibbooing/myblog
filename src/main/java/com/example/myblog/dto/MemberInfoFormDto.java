@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class MemberInfoFormDto {
 
+    private Long id;
     private String email;
 
     private String name;
@@ -29,7 +30,8 @@ public class MemberInfoFormDto {
 
     public MemberInfoFormDto() {}
 
-    public MemberInfoFormDto(String email, String name, String introduction, String imgName, String oriImgName, String imgUrl, String repimgYn) {
+    public MemberInfoFormDto(Long id, String email, String name, String introduction, String imgName, String oriImgName, String imgUrl, String repimgYn) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.introduction = introduction;

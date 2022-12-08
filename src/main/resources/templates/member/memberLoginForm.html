@@ -13,6 +13,20 @@
     </style>
 </th:block>
 
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            [# th:if="${errorMessage}"]
+                var errorMessage = [[${errorMessage}]];
+                if(errorMessage != null){
+                    alert(errorMessage);
+                }
+            [/]
+        });
+
+    </script>
+</th:block>
+
 <div layout:fragment="content" class="member-content">
     <wrapper class="member-wrapper d-flex justify-content-center">
 

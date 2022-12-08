@@ -45,4 +45,18 @@ public class ImgService {
         memberImg.updateMemberImg(oriImgName, imgName, imgUrl);
         memberImgRepository.save(memberImg);
     }
+
+    public void updateMemberImg(MemberImg savedMemberImg, MultipartFile memberImgFile)throws Exception{
+        if(!memberImgFile.isEmpty()){
+            String imgPath = memberImgLocation + "/" +savedMemberImg.getMember().getId();
+            if(!StringUtils.isEmpty(savedMemberImg.getImgName())){
+                fileService.deleteFile(imgPath+savedMemberImg.getImgName());
+            }
+            String oriImgName = memberImgFile.getOriginalFilename();
+            String imgName = fileService.uploadFile(imgPath, oriImgName, memberImgFile.getBytes());
+            String imgUrl = "/images/member/" + savedMemberImg.getMember().getId() + "/" +imgName;
+            savedMemberImg.updateMemberImg(oriImgName, imgName, imgUrl);
+        }
+
+    }
 }

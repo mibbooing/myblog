@@ -42,18 +42,15 @@ public class MemberController {
 
     @PostMapping(value = "/new")
     public String memberForm(@Valid MemberFormDto memberFormDto, BindingResult bindingResult, Model model){
-
         if(bindingResult.hasErrors()){
             return "member/memberForm";
         }
-
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
             memberService.saveMemberLog(member, LogType.CREATE);
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
-            System.out.println(e.getMessage());
             return "member/memberForm";
         }
         return "redirect:/home";
@@ -84,7 +81,8 @@ public class MemberController {
     @PostMapping(value = "/myPage")
     public String saveMyPage(Principal principal, MemberInfoFormDto memberInfoFormDto, Model model,@RequestParam("memberImgFile") MultipartFile imgFiles){
         try {
-            memberService.updateMemberInfo(principal.getName(), memberInfoFormDto, imgFiles);
+            Member member = memberService.updateMemberInfo(principal.getName(), memberInfoFormDto, imgFiles);
+            memberService.saveMemberLog(member, LogType.UPDATE);
         } catch (Exception e){
             model.addAttribute("errorMessage", "사용자 정보 수정중 에러가 발생하였습니다.");
             return "member/myPage";
