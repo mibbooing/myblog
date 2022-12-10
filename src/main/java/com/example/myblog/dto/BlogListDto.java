@@ -8,15 +8,16 @@ import lombok.Setter;
 @Setter
 public class BlogListDto {
 
-    private Long blogId;
-
+    private Long id;
     private String blogNm;
+    private String imgUrl;
 
-    private Long memberId;
+    public BlogListDto() {
+    }
 
-    public BlogListDto(Long blogId, String blogNm,Long memberId){
-        this.blogId = blogId;
+    public BlogListDto(Long id, String blogNm, String imgUrl){
+        this.id = id;
         this.blogNm = blogNm;
-        this.memberId = memberId;
+        this.imgUrl = imgUrl;
     }
 }

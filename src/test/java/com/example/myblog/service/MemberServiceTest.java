@@ -1,13 +1,11 @@
 package com.example.myblog.service;
 
 import com.example.myblog.constant.LogType;
-import com.example.myblog.dto.MemberImgDto;
-import com.example.myblog.dto.MemberInfoFormDto;
-import com.example.myblog.entity.Member;
-import com.example.myblog.dto.MemberFormDto;
-import com.example.myblog.entity.MemberImg;
-import com.example.myblog.entity.MemberLog;
+import com.example.myblog.dto.*;
+import com.example.myblog.entity.*;
+import com.example.myblog.repository.BlogImgRepository;
 import com.example.myblog.repository.MemberImgRepository;
+import com.example.myblog.repository.TopicRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +35,7 @@ class MemberServiceTest {
     @Autowired
     MemberImgRepository memberImgRepository;
 
+
     public Member createMember() {
         MemberFormDto memberFormDto = new MemberFormDto();
         memberFormDto.setEmail("test@email.com");
@@ -49,6 +51,7 @@ class MemberServiceTest {
         memberInfoFormDto.setIntroduction("안녕하세요!");
         return memberInfoFormDto;
     }
+
 
     @Test
     @DisplayName("회원가입 테스트")
@@ -85,11 +88,11 @@ class MemberServiceTest {
         Member member = createMember();
         memberService.saveMember(member);
 
-        MemberLog memberLog = memberService.saveMemberLog(member, LogType.CREATE);
+        MemberLog memberLog = memberService.saveMemberLog(member, null,LogType.CREATE);
 
         assertEquals(member.getName(),memberLog.getMember_name_log());
         assertEquals(member.getIntroduction(),memberLog.getMember_introduction_log());
-        assertEquals(member.getName(),memberLog.getMember_profile_img_log());
+        assertEquals(null,memberLog.getMember_profile_img_log());
         assertEquals(LogType.CREATE, memberLog.getLogType());
     }
 /*
@@ -116,7 +119,9 @@ class MemberServiceTest {
         Member member1 = memberService.updateMemberInfo(member.getEmail(),memberInfoFormDto,multipartFile);
         MemberInfoFormDto savedMemberInfoFormDto = memberImgRepository.findByMemberIdAndRepimgYn(member.getId(),"Y");
 //
-        assertEquals(savedMemberInfoFormDto.getImgName(), multipartFile.getOriginalFilename());
+        assertEquals(savedMemberInfoFormDto.getOriImgName(), multipartFile.getOriginalFilename());
     }
+
+
 
 }

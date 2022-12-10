@@ -1,8 +1,7 @@
 package com.example.myblog.service;
 
 import com.example.myblog.constant.LogType;
-import com.example.myblog.dto.MemberInfoFormDto;
-import com.example.myblog.dto.MemberLogDto;
+import com.example.myblog.dto.*;
 import com.example.myblog.entity.Member;
 import com.example.myblog.entity.MemberImg;
 import com.example.myblog.entity.MemberLog;
@@ -10,6 +9,7 @@ import com.example.myblog.repository.MemberImgRepository;
 import com.example.myblog.repository.MemberLogRepository;
 import com.example.myblog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityExistsException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -56,8 +58,8 @@ public class MemberService implements UserDetailsService {
                 .build();
     }
 
-    public MemberLog saveMemberLog(Member member, LogType logType) {
-        MemberLogDto memberLogDto = new MemberLogDto(member.getName(), member.getIntroduction(), member.getName(), logType);
+    public MemberLog saveMemberLog(Member member, String imgName,LogType logType) {
+        MemberLogDto memberLogDto = new MemberLogDto(member.getName(), member.getIntroduction(), imgName, logType);
         MemberLog memberLog = MemberLog.createMemberLog(member, memberLogDto);
         return memberLogRepository.save(memberLog);
     }
@@ -77,17 +79,26 @@ public class MemberService implements UserDetailsService {
     public Member updateMemberInfo(String email, MemberInfoFormDto memberInfoFormDto, MultipartFile imgFiles) throws Exception {
         Member member = memberRepository.findByEmail(email);
         if(!imgFiles.isEmpty()) {
+            ImgDto imgDto;
+            MemberImg memberImg;
+            ImgSaveTypeDto imgSaveTypeDto = new ImgSaveTypeDto(member.getId(),"member",email);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("member", member);
             if (memberImgRepository.findByMemberIdAndRepimgYn(member.getId(), "Y") != null) {
-                MemberImg savedMemberImg = memberImgRepository.findById(memberInfoFormDto.getId()).orElseThrow(EntityExistsException::new);
-                imgService.updateMemberImg(savedMemberImg, imgFiles);
-            } else {
-                MemberImg memberImg = new MemberImg();
-                memberImg.setMember(member);
-                memberImg.setRepimgYn("Y");
-                imgService.saveMemberImg(memberImg, imgFiles);
+                memberImg = memberImgRepository.findById(memberInfoFormDto.getId()).orElseThrow(EntityExistsException::new);
+                imgDto = modelMapping(memberImg);
+                imgService.updateImg(imgDto, imgSaveTypeDto, imgFiles, map);
             }
+            imgService.saveImg(imgSaveTypeDto, imgFiles, map);
+
         }
         member.updateMemberInfo(memberInfoFormDto.getName(), memberInfoFormDto.getIntroduction());
         return member;
+    }
+
+    private ImgDto modelMapping(MemberImg memberImg){
+        ModelMapper modelMapper = new ModelMapper();
+        ImgDto imgDto = modelMapper.map(memberImg, ImgDto.class);
+        return imgDto;
     }
 }

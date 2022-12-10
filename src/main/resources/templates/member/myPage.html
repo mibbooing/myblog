@@ -27,7 +27,6 @@
                     alert(errorMessage);
                 }
             [/]
-
             bindDomEvent();
         });
 
@@ -61,7 +60,7 @@
 <!--사용자 스트립트 추가-->
 
 <div layout:fragment="content" class="member-content">
-    <wrapper class="member-wrapper d-flex justify-content-center">
+    <wrapper class="member-wrapper justify-content-center">
         <form action="/members/myPage" role="form" method="post" enctype="multipart/form-data"
               th:object="${memberInfoFormDto}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -95,6 +94,17 @@
                 <button type="submit" class="btn btn-primary" style="">수정하기</button>
             </div>
         </form>
+        <div class="blog-list" th:object="${blogList}">
+            <div class="blog-img justify-content-center" th:each="blogList : ${blogList}">
+                <a th:href="'/blog/' + ${blogList.blogNm} + '/myPage'">
+                    <img th:if="${blogList.imgUrl} != null" class="blog-img-inner" th:src="${blogList.imgUrl}" alt=""/>
+                    <img th:unless="${blogList.imgUrl} != null" class="blog-img-inner" src="/img/basic_profile_img.jpg" alt=""/>
+                    <span th:text="${blogList.blogNm}"></span>
+                </a>
+            </div>
+
+        </div>
     </wrapper>
+
 </div>
 </html>

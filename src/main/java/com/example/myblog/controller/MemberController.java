@@ -48,7 +48,7 @@ public class MemberController {
         try {
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
-            memberService.saveMemberLog(member, LogType.CREATE);
+            memberService.saveMemberLog(member, null ,LogType.CREATE);
         } catch (IllegalStateException e){
             model.addAttribute("errorMessage", e.getMessage());
             return "member/memberForm";
@@ -71,18 +71,19 @@ public class MemberController {
         try{
             MemberInfoFormDto memberInfoFormDto = memberService.getMemberInfo(principal.getName());
             model.addAttribute("memberInfoFormDto", memberInfoFormDto);
+            List<BlogListDto> blogList = blogService.getMyBlogList(principal.getName());
+            model.addAttribute("blogList", blogList);
         }catch (EntityNotFoundException e){
             model.addAttribute("errorMessage", "잘못된 접근입니다.");
             return "redirect:/home";
         }
-
         return "member/myPage";
     }
     @PostMapping(value = "/myPage")
     public String saveMyPage(Principal principal, MemberInfoFormDto memberInfoFormDto, Model model,@RequestParam("memberImgFile") MultipartFile imgFiles){
         try {
             Member member = memberService.updateMemberInfo(principal.getName(), memberInfoFormDto, imgFiles);
-            memberService.saveMemberLog(member, LogType.UPDATE);
+            memberService.saveMemberLog(member, imgFiles.getOriginalFilename(), LogType.UPDATE);
         } catch (Exception e){
             model.addAttribute("errorMessage", "사용자 정보 수정중 에러가 발생하였습니다.");
             return "member/myPage";

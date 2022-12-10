@@ -1,24 +1,18 @@
 package com.example.myblog.controller;
 
 import com.example.myblog.dto.BlogFormDto;
-import com.example.myblog.dto.BlogListDto;
-import com.example.myblog.dto.MemberImgDto;
-import com.example.myblog.dto.MemberInfoFormDto;
+import com.example.myblog.dto.BlogInfoFormDto;
 import com.example.myblog.entity.Topic;
 import com.example.myblog.service.BlogService;
-import com.example.myblog.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequestMapping("/blogs")
 @Controller
@@ -66,7 +60,9 @@ public class BlogController {
     }
 
     @GetMapping(value = "/{blogNm}/myPage")
-    public String getBlogMyPage() {
+    public String getBlogMyPage(@PathVariable("blogNm")String blogNm,Model model) {
+        BlogInfoFormDto blogInfoFormDto = blogService.getMyBlogForm(blogNm);
+        model.addAttribute("blogInfoFormDto", blogInfoFormDto);
         return "blog/myPage";
     }
 

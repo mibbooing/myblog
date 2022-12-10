@@ -86,14 +86,17 @@ a:hover {
 }
 .member-wrapper{
     /*margin-top: 13rem;*/
+    flex-direction: column;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     display: table-cell;
     vertical-align: middle;
+    max-height: 45rem;
 }
 .member-wrapper > form{
+/*    display: table-row;*/
     min-width: 250px;
     max-width: 300px;
 }
@@ -109,13 +112,39 @@ a:hover {
     width: 250px;
     height: 250px;
     object-fit: cover;
-    max-height: 300px;
+    max-height: 250px;
     border-radius: 50%;
     overflow: hidden;
     position : relative;
 }
 .member-wrapper .member-profile-img .member-img-input{
     display: none;
+}
+
+.member-wrapper .blog-list .blog-img a{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.member-wrapper .blog-list .blog-img span{
+    vertical-align: middle;
+    font-size: 1.2rem;
+}
+
+.member-wrapper .blog-list .blog-img a:hover{
+    background-color : #CCCCCC;
+}
+.member-wrapper .blog-list .blog-img-inner{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-top : 0.5rem;
+    margin-right : 0.5rem;
+    margin-bottom : 0.5rem;
+}
+.member-wrapper .blog-list .blog-img-inner{
+
 }
 .member-img-change-btn{
     position: absolute;

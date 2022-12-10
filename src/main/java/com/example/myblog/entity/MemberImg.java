@@ -1,5 +1,6 @@
 package com.example.myblog.entity;
 
+import com.example.myblog.dto.ImgDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,17 +28,23 @@ public class MemberImg {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void createMemberImg(String imgName, String oriImgName, String imgUrl, Member member, String repimgYn){
-        this.imgName = imgName;
-        this.oriImgName = oriImgName;
-        this.imgUrl = imgUrl;
-        this.member = member;
-        this.repimgYn = repimgYn;
+    public MemberImg() {
     }
 
-    public void updateMemberImg(String imgName, String oriImgName, String imgUrl){
-        this.imgName = imgName;
-        this.oriImgName = oriImgName;
-        this.imgUrl = imgUrl;
+    public MemberImg(ImgDto imgDto, Member member) {
+        this.imgUrl = imgDto.getImgUrl();
+        this.imgName = imgDto.getImgName();
+        this.oriImgName = imgDto.getOriImgName();
+        this.repimgYn = imgDto.getRepimgYn();
+        this.member = member;
+    }
+
+    public void updateMemberImg(ImgDto imgDto, Member member){
+        this.id = imgDto.getId();
+        this.imgUrl = imgDto.getImgUrl();
+        this.imgName = imgDto.getImgName();
+        this.oriImgName = imgDto.getOriImgName();
+        this.repimgYn = imgDto.getRepimgYn();
+        this.member = member;
     }
 }

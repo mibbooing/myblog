@@ -16,4 +16,9 @@ public class Topic {
     private Long id;
 
     private String topicName;
+
+    public void createTopic(Long id, String topicName) {
+        this.id = id;
+        this.topicName = topicName;
+    }
 }
