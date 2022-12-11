@@ -96,7 +96,7 @@
         </form>
         <div class="blog-list" th:object="${blogList}">
             <div class="blog-img justify-content-center" th:each="blogList : ${blogList}">
-                <a th:href="'/blog/' + ${blogList.blogNm} + '/myPage'">
+                <a th:href="'/blogs/' + ${blogList.blogNm} + '/myPage'">
                     <img th:if="${blogList.imgUrl} != null" class="blog-img-inner" th:src="${blogList.imgUrl}" alt=""/>
                     <img th:unless="${blogList.imgUrl} != null" class="blog-img-inner" src="/img/basic_profile_img.jpg" alt=""/>
                     <span th:text="${blogList.blogNm}"></span>

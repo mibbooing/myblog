@@ -48,6 +48,8 @@ public class BlogService {
 
     public BlogInfoFormDto getMyBlogForm(String blogNm){
         BlogInfoFormDto blogInfoFormDto = blogRepository.findByBlogNmAndRepImgYn(blogNm, "Y");
+        List<Topic> topicList = topicRepository.findAll();
+        blogInfoFormDto.setTopicList(topicList);
         return blogInfoFormDto;
     }
 
