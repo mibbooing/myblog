@@ -72,7 +72,9 @@ public class MemberController {
             MemberInfoFormDto memberInfoFormDto = memberService.getMemberInfo(principal.getName());
             model.addAttribute("memberInfoFormDto", memberInfoFormDto);
             List<BlogListDto> blogList = blogService.getMyBlogList(principal.getName());
-            model.addAttribute("blogList", blogList);
+            if(!blogList.isEmpty()) {
+                model.addAttribute("blogList", blogList);
+            }
         }catch (EntityNotFoundException e){
             model.addAttribute("errorMessage", "잘못된 접근입니다.");
             return "redirect:/home";
@@ -81,6 +83,7 @@ public class MemberController {
     }
     @PostMapping(value = "/myPage")
     public String saveMyPage(Principal principal, MemberInfoFormDto memberInfoFormDto, Model model,@RequestParam("memberImgFile") MultipartFile imgFiles){
+        System.out.println("멤버 아이디 : " + memberInfoFormDto.getId());
         try {
             Member member = memberService.updateMemberInfo(principal.getName(), memberInfoFormDto, imgFiles);
             memberService.saveMemberLog(member, imgFiles.getOriginalFilename(), LogType.UPDATE);

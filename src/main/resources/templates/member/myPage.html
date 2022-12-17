@@ -95,14 +95,17 @@
             </div>
         </form>
         <div class="blog-list" th:object="${blogList}">
-            <div class="blog-img justify-content-center" th:each="blogList : ${blogList}">
+            <div th:if="${blogList} != null" class="blog-img justify-content-center" th:each="blogList : ${blogList}">
                 <a th:href="'/blogs/' + ${blogList.blogNm} + '/myPage'">
                     <img th:if="${blogList.imgUrl} != null" class="blog-img-inner" th:src="${blogList.imgUrl}" alt=""/>
                     <img th:unless="${blogList.imgUrl} != null" class="blog-img-inner" src="/img/basic_profile_img.jpg" alt=""/>
                     <span th:text="${blogList.blogNm}"></span>
                 </a>
             </div>
-
+            <div th:unless="${blogList} != null">
+                <label>생성된 블로그가 없습니다.</label>
+                <button class="btn btn-primary" onclick="location.href='/blogs/new'">블로그 만들기</button>
+            </div>
         </div>
     </wrapper>
 

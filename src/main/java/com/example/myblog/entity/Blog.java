@@ -37,8 +37,7 @@ public class Blog {
         return blog;
     }
 
-    public void updateBlog(String blogNm, Topic topic){
-        this.setBlogNm(blogNm);
+    public void updateBlog(Topic topic){
         this.setTopic(topic);
     }
 

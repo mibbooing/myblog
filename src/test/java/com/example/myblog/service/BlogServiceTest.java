@@ -1,14 +1,11 @@
 package com.example.myblog.service;
 
+import com.example.myblog.constant.CategoryType;
+import com.example.myblog.constant.LogType;
 import com.example.myblog.dto.*;
-import com.example.myblog.entity.Blog;
-import com.example.myblog.entity.BlogImg;
-import com.example.myblog.entity.Member;
-import com.example.myblog.entity.Topic;
-import com.example.myblog.repository.BlogImgRepository;
-import com.example.myblog.repository.BlogRepository;
-import com.example.myblog.repository.MemberImgRepository;
-import com.example.myblog.repository.TopicRepository;
+import com.example.myblog.entity.*;
+import com.example.myblog.repository.*;
+import lombok.extern.java.Log;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,9 @@ class BlogServiceTest {
 
     @Autowired
     TopicRepository topicRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
 
     public Member createMember() {
@@ -208,4 +208,171 @@ class BlogServiceTest {
         assertEquals(blogInfoFormDto.getBlogId(), getBlogInfoFormDto.getBlogId());
 
     }
+
+    @Test
+    @DisplayName("카테고리 생성 테스트")
+    public void categoryCreateTest() {
+        List<Topic> topicList = createTopic();
+        for (Topic topic : topicList) {
+            topicRepository.save(topic);
+            System.out.println(topic.getId());
+        }
+
+        Member member = createMember();
+        Member savedMember = memberService.saveMember(member);
+        BlogFormDto blogFormDto = new BlogFormDto();
+        blogFormDto.setBlogNm("블로그만들기테스트");
+        blogFormDto.setTopicId(3L);
+        Blog blog = blogService.saveBlog(blogFormDto, savedMember.getEmail());
+        blogService.saveCategory(blogFormDto.getBlogNm(), null);
+
+        List<CategoryDto> categoryList = categoryRepository.findByBlogId(blog.getId());
+        for (CategoryDto categoryDto : categoryList) {
+            if (categoryList.size() == 1) {
+                assertEquals(categoryDto.getCategoryNm(), blogFormDto.getBlogNm());
+            } else {
+                System.out.println(categoryDto.getCategoryNm());
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("카테고리 생성 테스트2")
+    public void categoryCreateTest2() {
+        List<Topic> topicList = createTopic();
+        for (Topic topic : topicList) {
+            topicRepository.save(topic);
+            System.out.println(topic.getId());
+        }
+
+        Member member = createMember();
+        Member savedMember = memberService.saveMember(member);
+        BlogFormDto blogFormDto = new BlogFormDto();
+        blogFormDto.setBlogNm("블로그만들기테스트");
+        blogFormDto.setTopicId(3L);
+        Blog blog = blogService.saveBlog(blogFormDto, savedMember.getEmail());
+        blogService.saveCategory(blogFormDto.getBlogNm(), null);
+        CategoryDto categoryDto1 = new CategoryDto();
+        CategoryDto categoryDto2 = new CategoryDto();
+        CategoryDto categoryDto3 = new CategoryDto();
+
+        List<CategoryDto> categoryDtoList = new ArrayList<>();
+        categoryDto1.setCategoryNm("분류1");
+        categoryDto1.setBlogId(blog.getId());
+        categoryDto1.setDepth(CategoryType.MAIN);
+
+
+        Category category = blogService.createMainCategory(blog.getBlogNm());
+
+        categoryDto1.setCategoryId(category.getId());
+        categoryDto1.setReqType(LogType.UPDATE);
+        categoryDtoList.add(categoryDto1);
+
+        categoryDto2.setCategoryNm("분류1-1");
+        categoryDto2.setBlogId(blog.getId());
+        categoryDto2.setDepth(CategoryType.SUB);
+        categoryDto2.setParentCategoryId(category.getId());
+        categoryDtoList.add(categoryDto2);
+
+        categoryDto3.setCategoryNm("분류1-2");
+        categoryDto3.setBlogId(blog.getId());
+        categoryDto3.setDepth(CategoryType.SUB);
+        categoryDto3.setParentCategoryId(category.getId());
+        categoryDtoList.add(categoryDto3);
+
+        blogService.saveCategory(blog.getBlogNm(), categoryDtoList);
+
+        categoryDto3.setCategoryNm("분류1-2");
+        categoryDto3.setBlogId(blog.getId());
+        categoryDto3.setDepth(CategoryType.SUB);
+        categoryDto3.setParentCategoryId(category.getId());
+        categoryDtoList.add(categoryDto3);
+
+        List<CategoryDto> categoryList = categoryRepository.findByBlogId(blog.getId());
+        for(CategoryDto categoryDto : categoryList){
+        }
+        int i = 0;
+        for(CategoryDto categoryDto : categoryList){
+            if(categoryDto.getCategoryNm() == blog.getBlogNm()){
+            }else{
+                assertEquals(categoryDto.getCategoryNm(), categoryDtoList.get(i).getCategoryNm());
+                i++;
+            }
+        }
+
+
+
+    }
+    @Test
+        @DisplayName("카테고리 삭제 테스트")
+        public void categoryDeleteTest() {
+            List<Topic> topicList = createTopic();
+            for (Topic topic : topicList) {
+                topicRepository.save(topic);
+                System.out.println(topic.getId());
+            }
+
+            Member member = createMember();
+            Member savedMember = memberService.saveMember(member);
+            BlogFormDto blogFormDto = new BlogFormDto();
+            blogFormDto.setBlogNm("블로그만들기테스트");
+            blogFormDto.setTopicId(3L);
+            Blog blog = blogService.saveBlog(blogFormDto, savedMember.getEmail());
+            blogService.saveCategory(blogFormDto.getBlogNm(), null);
+            CategoryDto categoryDto1 = new CategoryDto();
+            CategoryDto categoryDto2 = new CategoryDto();
+            CategoryDto categoryDto3 = new CategoryDto();
+
+            List<CategoryDto> categoryDtoList = new ArrayList<>();
+            categoryDto1.setCategoryNm("분류1");
+            categoryDto1.setBlogId(blog.getId());
+            categoryDto1.setDepth(CategoryType.MAIN);
+
+
+            Category category = blogService.createMainCategory(blog.getBlogNm());
+
+            categoryDto1.setCategoryId(category.getId());
+            categoryDto1.setReqType(LogType.UPDATE);
+            categoryDtoList.add(categoryDto1);
+
+            categoryDto2.setCategoryNm("분류1-1");
+            categoryDto2.setBlogId(blog.getId());
+            categoryDto2.setDepth(CategoryType.SUB);
+            categoryDto2.setParentCategoryId(category.getId());
+            categoryDtoList.add(categoryDto2);
+
+            categoryDto3.setCategoryNm("분류1-2");
+            categoryDto3.setBlogId(blog.getId());
+            categoryDto3.setDepth(CategoryType.SUB);
+            categoryDto3.setParentCategoryId(category.getId());
+            categoryDtoList.add(categoryDto3);
+
+            blogService.saveCategory(blog.getBlogNm(), categoryDtoList);
+
+            List<CategoryDto> categoryList = categoryRepository.findByBlogId(blog.getId());
+
+            for(CategoryDto categoryDto : categoryList){
+                if(categoryDto.getCategoryNm().equals(categoryDto3.getCategoryNm())){
+                    Long id = categoryDto.getCategoryId();
+                    categoryDto3.setCategoryId(id);
+                }
+            }
+            categoryDto3.setReqType(LogType.DELETE);
+            List<CategoryDto> delCategoryDtoList = new ArrayList<>();
+            delCategoryDtoList.add(categoryDto3);
+
+            categoryDtoList.remove(2);
+            blogService.saveCategory(blog.getBlogNm(), delCategoryDtoList);
+
+            int i = 0;
+            categoryList = categoryRepository.findByBlogId(blog.getId());
+                for(CategoryDto categoryDto : categoryList){
+                    if(categoryDto.getCategoryNm() == blog.getBlogNm()){
+                    }else{
+                        assertEquals(categoryDto.getCategoryNm(), categoryDtoList.get(i).getCategoryNm());
+                        i++;
+                    }
+                }
+            }
+
 }
