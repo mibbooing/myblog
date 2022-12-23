@@ -55,9 +55,6 @@ a:hover {
     box-shadow: none !important;
     background: none;
 }
-.btn_menu{
-    display: none;
-}
 .btn_menu, .btn_home_menu{
     border: 0;
     outline: 0;
@@ -66,7 +63,7 @@ a:hover {
 .btn_home{
 
 }
-.btn_home_menu{
+.btn_menu, .btn_home_menu{
     display: none;
     position: absolute;
     right: 30px;
@@ -362,6 +359,9 @@ a:hover {
     margin-top: 1.3rem;
     outLine: solid 1px rgb(160, 160, 160);
 }
+.delete-item-list{
+    display: none;
+}
 .on-click{
     outline: solid 1px;
 }
@@ -411,6 +411,49 @@ img{
     height: auto;
 }
 
+.blog-main {
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    justify-content:center;
+    background-color: #F2FFff;
+}
+.blog-section {
+    float: left;
+    background-color: #F2FFff;
+    word-break:break-all;
+    width: 100%;
+    display: flex;
+    justify-content:center;
+}
+.blog-aside {
+    background-color: #F2FFB5;
+    min-width: 14rem;
+    margin-left: 5rem;
+    display: flex;
+    float: left;
+}
+.blog-main .blog-section .blog-post-form{
+    width: 90%;
+}
+.blog-main .blog-section .blog-post-form .ck-editor__editable{
+    height: 30rem;
+}
+.blog-main .blog-section .blog-post-form input:focus{
+    border-radius: 0%;
+    border-color: #2977ff;
+    outline: none;
+    margin-bottom: 0px;
+}
+.post-title-input{
+    display: block;
+    width: 100%;
+    border: 1px solid #ccced1;
+    margin-bottom: -1px;
+    font-size: 1rem;
+    padding: 10px;
+}
+
 
 
 
@@ -426,26 +469,20 @@ img{
       padding-left: 20px;
       padding-right: 20px;
   }
-  .area-aside {
+  .blog-aside {
       position: fixed;
       height: 100%;
       top: 0;
       right: -100%;
       max-width: 380px;
       z-index: 999;
-      flex-direction: column;
+/*      flex-direction: column;
       justify-content: center;
-      align-items: center;
+      align-items: center;*/
       transition: all 0.3s;
   }
   .action{
       right: 0;
-  }
-  .btn_menu{
-      display: inline-block;
-      position: fixed;
-      left:0;
-      top:0;
   }
   .navbar {
       width: 100%;
@@ -474,7 +511,7 @@ img{
       width: 100%;
       text-align: center;
   }
-  .btn_home_menu{
+  .btn_menu, .btn_home_menu{
       display: inline-block;
       position: absolute;
       right: 10px;
@@ -489,6 +526,23 @@ img{
   .navbar_menu li:hover{
       background-color: rgba(197, 201, 199, 0.884);
   }
+  .blog-main{
+        height: 80%;
+    }
+    .blog-section {
+        width: 100%;
+        min-width:150px;
+        height: 100%;
+        background-color: #F2FFff;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .blog-main .blog-section .blog-post-form{
+        height: 100%;
+    }
+    .blog-main .blog-section .blog-post-form .ck-editor__main{
+        height: 100%;
+    }
 
 }
 
@@ -500,7 +554,7 @@ img{
         min-width: 30rem;
         margin-left: 8rem;
     }
-    .btn_home_menu{
+    .btn_menu, .btn_home_menu{
         right: 3rem;
     }
     .member-wrapper > form{

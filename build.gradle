@@ -35,6 +35,9 @@ dependencies {
 
 	/*modelMapper*/
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.2'
+
+	/*json parse*/
+	implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 tasks.named('test') {

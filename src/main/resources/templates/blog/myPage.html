@@ -36,7 +36,6 @@
             $(document).on("click", function(){
                 doMainSortable();
                 doSubSortable();
-
             });
             function doSubSortable(){
                 let mainCount = 0;
@@ -150,44 +149,49 @@
                     [/]
                     console.log([[${#lists.size(blogMyPageFormDto.categoryDtoList)}]]);
                 [/]
-                totalCategorySize = [[${#lists.size(blogMyPageFormDto.categoryDtoList)}]];
+                totalCategorySize = $(".blog-category-group").find(".category-item").length;
                 doSubSortable();
                 doMainSortable();
             }
 
-
             $(document).on("click", ".item-btn-prim-add",function(){
                 var categoryId = addMainCategory();
-                totalCategorySize++;
+                console.log("click : "+ categoryId);
 
                 var addCate= "<div class='category-item-prim category-item sort-target' name='categoryDto' id=main" + categoryId +"><i class='bi bi-chevron-expand main-sort-icon'></i><input class='category-item-input category-input-prim' " +
-                            "name='categoryDtoList[" + totalCategorySize + "].categoryNm value =''>" +
+                            "name='categoryDtoList[" + totalCategorySize + "].categoryNm' value =''>" +
                             "<input class='item-category-id' type='hidden' name=categoryDtoList["+ totalCategorySize +"].categoryId value='" + categoryId + "'>" +
                             "<input class='item-depth-type' type='hidden' name=categoryDtoList["+ totalCategorySize +"].depth value='" + [[${T(com.example.myblog.constant.CategoryType).MAIN}]] + "'>" +
                             "<input class='item-parent-category' type='hidden' name=categoryDtoList["+ totalCategorySize +"].parentCategoryId value='" + $('.default-category-id').attr('value') + "'>" +
                             "<input class='item-sort-num' type='hidden' name=categoryDtoList["+ totalCategorySize +"].sortNum value=''>" +
-                            "<input class='item-req-type' type='hidden' name=categoryDtoList["+ totalCategorySize +"].reqType value=" + reqCreate + ">" +
-                            "<input class='item-blog-id' type='hidden' name=categoryDtoList["+ totalCategorySize +"].blogId value=" + [[${blogMyPageFormDto.blogInfoFormDto.blogId}]] + ">";
-                $(".blog-category-group").append(addCate);
+                            "<input class='item-req-type' type='hidden' name=categoryDtoList["+ totalCategorySize +"].reqType value=" + reqUpdate + ">" +
+                            "<input class='item-blog-id' type='hidden' name=categoryDtoList["+ totalCategorySize +"].blogId value=" + [[${blogMyPageFormDto.blogInfoFormDto.blogId}]] + ">" +
+                            "<i class='bi bi-plus item-btn-sub-add'></i><i class='bi bi-x item-btn-del'></i></div>";
+                $(".default-category").append(addCate);
+                totalCategorySize++;
             });
 
             $(document).on("click", ".item-btn-sub-add",function(){
-                totalCategorySize++;
-                var addCate= "<div class='category-item-sub category-item sort-target' name='categoryDto'><i class='bi bi-chevron-expand sub-sort-icon'></i><input class='category-item-input category-input-sub'" +
-                        "name='categoryDtoList[" + totalCategorySize + "].categoryNm value =''>" +
+                var subIdNum = "sub" + $(this).parent('.category-item-prim').children('.item-category-id').attr('value') + "-" + ($(this).parent('.category-item-prim').find('.category-item-sub').length+1);
+                console.log("subIdNum:"+subIdNum);
+                var addCate= "<div class='category-item-sub category-item sort-target' name='categoryDto' id=sub" + subIdNum + "><i class='bi bi-chevron-expand sub-sort-icon'></i><input class='category-item-input category-input-sub'" +
+                        "name='categoryDtoList[" + totalCategorySize + "].categoryNm' value =''>" +
                         "<input class='item-category-id' type='hidden' name=categoryDtoList["+ totalCategorySize +"].categoryId value=''>" +
                         "<input class='item-depth-type' type='hidden' name=categoryDtoList["+ totalCategorySize +"].depth value=" + [[${T(com.example.myblog.constant.CategoryType).SUB}]] + ">" +
                         "<input class='item-parent-category' type='hidden' name=categoryDtoList["+ totalCategorySize +"].parentCategoryId value=" + $(this).parent().children('.item-category-id').attr('value') + ">" +
                         "<input class='item-sort-num' type='hidden' name=categoryDtoList["+ totalCategorySize +"].sortNum value=''>" +
                         "<input class='item-req-type' type='hidden' name=categoryDtoList["+ totalCategorySize +"].reqType value=" + reqCreate + ">" +
-                        "<input class='item-blog-id' type='hidden' name=categoryDtoList["+ totalCategorySize +"].blogId value=" + [[${blogMyPageFormDto.blogInfoFormDto.blogId}]] + ">";
+                        "<input class='item-blog-id' type='hidden' name=categoryDtoList["+ totalCategorySize +"].blogId value=" + [[${blogMyPageFormDto.blogInfoFormDto.blogId}]] + ">" +
+                        "<i class='bi bi-x item-btn-del'></i></div>";
                 $(this).parent().append(addCate);
+                totalCategorySize++;
             });
 
             function deleteCategory(element, type){
                 totalCategorySize++;
                 console.log(element);
                 $('#'+element).children('.item-req-type').attr('value', reqDelete);
+                $('#'+element).children('.item-sort-num').attr('value', 0);
                 $('#'+element).css('display','none');
                 $('#'+element).appendTo('.blog-category-group');
                 if(type){
@@ -214,7 +218,7 @@
             function addMainCategory(){
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
-
+                var returnVal;
                 var url = "/blogs/category/new";
                 var paramData = {
                     blogNm : $("#blogNm").val()
@@ -231,8 +235,9 @@
                     },
                     datatype    :"json",
                     cache       : false,
+                    async       : false,
                     success     : function(result, status){
-                        return result;
+                        returnVal = result;
                     },
                     error : function(jqXHR, status, error){
                         if(jqXHR.status == '401'){
@@ -243,6 +248,7 @@
                         }
                     }
                 });
+                return returnVal;
             }
 
             function bindDomEvent(){
@@ -272,24 +278,26 @@
             }
 
             function validCheck(){
-                categorySort();
-                return true;
+                return categorySort();
             }
             function categorySort(){
                 var parentId;
                 $(".default-category").children(".category-item-prim").each(function (index, item){
                     $(item).children(".item-sort-num").attr("value", index);
                     parentId = $(item).children(".item-category-id").attr("value");
-                    console.log($(item).children(".category-item-input").attr("value"));
-                    $(item).children(".category-item-sub").each(function (subIndex, subItem){
-                        $(subItem).children(".item-sort-num").attr("value", subIndex);
-                        $(subItem).children(".item-depth-type").attr("value", [[${T(com.example.myblog.constant.CategoryType).SUB}]]);
-                        $(subItem).children(".item-parent-category").attr("value", parentId);
-
-                        console.log("  "+$(subItem).children(".category-item-input").attr("value"));
-                    });
+                    console.log("mainNum:"+index);
+                    if($(item).children(".category-item-sub").length){
+                        $(item).children(".category-item-sub").each(function (subIndex, subItem){
+                            $(subItem).children(".item-sort-num").attr("value", subIndex);
+                            $(subItem).children(".item-depth-type").attr("value", [[${T(com.example.myblog.constant.CategoryType).SUB}]]);
+                            $(subItem).children(".item-parent-category").attr("value", parentId);
+                            console.log("subNum:"+subIndex);
+<!--                            console.log("  "+$(subItem).children(".category-item-input").attr("value"));-->
+                        });
+                    }
                 });
-                return true;
+                console.log([[${#lists.size(blogMyPageFormDto.categoryDtoList)}]])
+                return confirm("콘솔확인");
             }
 
 
@@ -319,7 +327,7 @@
                 <div class="blog-input-wrapper">
                     <div class="form-group">
                         <label th:for="blogNm">블로그 이름</label>
-                        <input type="text" th:name="*{blogNm}" th:value="*{blogNm}" id="blogNm" class="form-control" placeholder="블로그 이름을 입력해주세요"
+                        <input type="text" name="blogNm" th:value="*{blogNm}" id="blogNm" class="form-control" placeholder="블로그 이름을 입력해주세요"
                                disabled/>
                         <p th:text="${valid_blogNm}" class="fieldError"></p>
                     </div>

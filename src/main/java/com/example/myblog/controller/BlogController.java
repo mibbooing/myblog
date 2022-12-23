@@ -5,6 +5,7 @@ import com.example.myblog.dto.*;
 import com.example.myblog.entity.Category;
 import com.example.myblog.entity.Topic;
 import com.example.myblog.service.BlogService;
+import com.example.myblog.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ public class BlogController {
 
     private final BlogService blogService;
 
+    private final CategoryService categoryService;
+
     @GetMapping(value = "/new")
     public String blogForm(BlogFormDto blogFormDto,Model model){
         blogFormDto = blogService.getBlogForm();
@@ -35,10 +38,6 @@ public class BlogController {
 
     @PostMapping(value = "/new")
     public String blogForm(@Valid BlogFormDto blogFormDto, BindingResult bindingResult, Model model, Principal principal){
-        System.out.println(blogFormDto.toString());
-        for (Topic id : blogFormDto.getTopicList()) {
-                        System.out.println("토픽 있다 : " + id.getId());
-                    }
         if(bindingResult.hasErrors()){
             blogFormDto.setTopicList(blogService.getBlogForm().getTopicList());
             model.addAttribute("blogFormDto", blogFormDto);
@@ -50,7 +49,7 @@ public class BlogController {
         }
         try {
             blogService.saveBlog(blogFormDto, principal.getName());
-            blogService.saveCategory(blogFormDto.getBlogNm(), null);
+            categoryService.saveCategory(blogFormDto.getBlogNm(), null);
         } catch (IllegalStateException e){
             blogFormDto = blogService.getBlogForm();
             model.addAttribute("blogFormDto", blogFormDto);
@@ -68,8 +67,7 @@ public class BlogController {
     @GetMapping(value = "/{blogNm}/myPage")
     public String getBlogMyPage(@PathVariable("blogNm")String blogNm,Model model) {
         LogTypeSet logTypeSet = new LogTypeSet();
-        BlogMyPageFormDto blogMyPageFormDto = new BlogMyPageFormDto(blogService.getMyBlogForm(blogNm), blogService.getCategory(blogNm), logTypeSet.createLogTypeSet());
-
+        BlogMyPageFormDto blogMyPageFormDto = new BlogMyPageFormDto(blogService.getMyBlogForm(blogNm), categoryService.getCategory(blogNm), logTypeSet.createLogTypeSet());
         model.addAttribute("blogMyPageFormDto", blogMyPageFormDto);
         return "blog/myPage";
     }
@@ -78,9 +76,13 @@ public class BlogController {
     public String updateBlogMyPage(@PathVariable("blogNm")String blogNm, @ModelAttribute BlogMyPageFormDto blogMyPageFormDto, @RequestParam("blogImgFile") MultipartFile multipartFile, Model model) {
         System.out.println("블로그ID: " + blogMyPageFormDto.getBlogInfoFormDto().getBlogId());
         List<CategoryDto> list = blogMyPageFormDto.getCategoryDtoList();
+        System.out.println(list.size());
+        for(CategoryDto a : list){
+            System.out.println("name: "+ a.getCategoryNm() +"  Type: "+a.getDepth()+"  sortNum:"+a.getSortNum()+"  blogId:"+a.getBlogId()+"  P_categoryId:"+a.getParentCategoryId()+"  categoryId:"+a.getCategoryId()+" reqType:"+a.getReqType());
+        }
         try{
             blogService.updateBlogInfo(blogMyPageFormDto.getBlogInfoFormDto(), multipartFile);
-            blogService.saveCategory(blogNm, blogMyPageFormDto.getCategoryDtoList());
+            categoryService.saveCategory(blogNm, blogMyPageFormDto.getCategoryDtoList());
         } catch (Exception e){
             model.addAttribute("errorMessage", "블로그 정보 수정중 에러가 발생하였습니다.");
             return "blog/myPage";
@@ -97,10 +99,11 @@ public class BlogController {
         String blogId = paramMap.get("blogNm").toString();
         Category category;
         try{
-            category = blogService.createMainCategory(blogId);
+            category = categoryService.createMainCategory(blogId);
         }catch (IllegalStateException e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+        System.out.println(category.getId());
         return new ResponseEntity<Long>(category.getId(), HttpStatus.OK);
     }
 
@@ -111,7 +114,7 @@ public class BlogController {
 
     @GetMapping(value = "/posts/new")
     public String postsForm(){
-        return "blog/newPosts";
+        return "blog/postForm";
     }
 
     @PostMapping(value = "/posts/new")

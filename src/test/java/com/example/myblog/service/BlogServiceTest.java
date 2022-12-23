@@ -34,9 +34,6 @@ class BlogServiceTest {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    MemberImgRepository memberImgRepository;
-
-    @Autowired
     BlogImgRepository blogImgRepository;
 
     @Autowired
@@ -44,6 +41,9 @@ class BlogServiceTest {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryService categoryService;
 
 
     public Member createMember() {
@@ -224,7 +224,7 @@ class BlogServiceTest {
         blogFormDto.setBlogNm("블로그만들기테스트");
         blogFormDto.setTopicId(3L);
         Blog blog = blogService.saveBlog(blogFormDto, savedMember.getEmail());
-        blogService.saveCategory(blogFormDto.getBlogNm(), null);
+        categoryService.saveCategory(blogFormDto.getBlogNm(), null);
 
         List<CategoryDto> categoryList = categoryRepository.findByBlogId(blog.getId());
         for (CategoryDto categoryDto : categoryList) {
@@ -251,7 +251,7 @@ class BlogServiceTest {
         blogFormDto.setBlogNm("블로그만들기테스트");
         blogFormDto.setTopicId(3L);
         Blog blog = blogService.saveBlog(blogFormDto, savedMember.getEmail());
-        blogService.saveCategory(blogFormDto.getBlogNm(), null);
+        categoryService.saveCategory(blogFormDto.getBlogNm(), null);
         CategoryDto categoryDto1 = new CategoryDto();
         CategoryDto categoryDto2 = new CategoryDto();
         CategoryDto categoryDto3 = new CategoryDto();
@@ -262,7 +262,7 @@ class BlogServiceTest {
         categoryDto1.setDepth(CategoryType.MAIN);
 
 
-        Category category = blogService.createMainCategory(blog.getBlogNm());
+        Category category = categoryService.createMainCategory(blog.getBlogNm());
 
         categoryDto1.setCategoryId(category.getId());
         categoryDto1.setReqType(LogType.UPDATE);
@@ -280,7 +280,7 @@ class BlogServiceTest {
         categoryDto3.setParentCategoryId(category.getId());
         categoryDtoList.add(categoryDto3);
 
-        blogService.saveCategory(blog.getBlogNm(), categoryDtoList);
+        categoryService.saveCategory(blog.getBlogNm(), categoryDtoList);
 
         categoryDto3.setCategoryNm("분류1-2");
         categoryDto3.setBlogId(blog.getId());
@@ -318,7 +318,7 @@ class BlogServiceTest {
             blogFormDto.setBlogNm("블로그만들기테스트");
             blogFormDto.setTopicId(3L);
             Blog blog = blogService.saveBlog(blogFormDto, savedMember.getEmail());
-            blogService.saveCategory(blogFormDto.getBlogNm(), null);
+            categoryService.saveCategory(blogFormDto.getBlogNm(), null);
             CategoryDto categoryDto1 = new CategoryDto();
             CategoryDto categoryDto2 = new CategoryDto();
             CategoryDto categoryDto3 = new CategoryDto();
@@ -329,7 +329,7 @@ class BlogServiceTest {
             categoryDto1.setDepth(CategoryType.MAIN);
 
 
-            Category category = blogService.createMainCategory(blog.getBlogNm());
+            Category category = categoryService.createMainCategory(blog.getBlogNm());
 
             categoryDto1.setCategoryId(category.getId());
             categoryDto1.setReqType(LogType.UPDATE);
@@ -347,7 +347,7 @@ class BlogServiceTest {
             categoryDto3.setParentCategoryId(category.getId());
             categoryDtoList.add(categoryDto3);
 
-            blogService.saveCategory(blog.getBlogNm(), categoryDtoList);
+            categoryService.saveCategory(blog.getBlogNm(), categoryDtoList);
 
             List<CategoryDto> categoryList = categoryRepository.findByBlogId(blog.getId());
 
@@ -362,7 +362,7 @@ class BlogServiceTest {
             delCategoryDtoList.add(categoryDto3);
 
             categoryDtoList.remove(2);
-            blogService.saveCategory(blog.getBlogNm(), delCategoryDtoList);
+            categoryService.saveCategory(blog.getBlogNm(), delCategoryDtoList);
 
             int i = 0;
             categoryList = categoryRepository.findByBlogId(blog.getId());

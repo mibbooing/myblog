@@ -1,0 +1,195 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_blog}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+
+<th:block layout:fragment="css">
+    <style>
+        .fieldError {
+            color: #bd2130;
+        }
+    </style>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            [# th:if="${errorMessage}"]
+                var errorMessage = [[${errorMessage}]];
+                if(errorMessage != null){
+                    alert(errorMessage);
+                }
+            [/]
+            $("select.hierarchy").on("change", function(){
+                var value=Number($(this).val());
+                retrieves(value);
+            });
+
+
+            const urlParams = new URL(location.href).searchParams;
+            const blogNm = urlParams.get('blogNm');
+        });
+        function loadCategory(){
+            [# th:if="${postFormDto.categoryDtoList}"]
+                var subCategoryList = new Map();
+                var count=0;
+                [# th:each="categoryList : ${postFormDto.categoryDtoList}"]
+                    [# th:if="${categoryList.depth == T(com.example.myblog.constant.CategoryType).SUB}"]
+                        if(subCategoryList.get([[${categoryList.parentCategoryId}]]) == null){
+                            subCategoryList.set([[${categoryList.parentCategoryId}]], new Map());
+                        }
+                        var addMap = new Map([
+                            ['categoryId', [[${categoryList.categoryId}]]],
+                            ['categoryNm', [[${categoryList.categoryNm}]]],
+                        ]);
+                        subCategoryList.get([[${categoryList.parentCategoryId}]]).set([[${categoryList.categoryId}]], addMap);
+                    [/]
+                [/]
+                return subCategoryList;
+            [/]
+        }
+            var valueFactory = function(parentId){
+                var subCategoryList = loadCategory();
+                return subCategoryList.get(parentId);
+            }
+            var retrieves = function(parentId){
+                var subCategoryList = valueFactory(parentId);
+                $("select[class='sub-category']").empty();
+
+                subCategoryList.forEach((value, key) => {
+                    console.log("key   :"+value.get('categoryId'));
+                    console.log("value :"+value.get('categoryNm'));
+                    $("<option>"+value.get('categoryNm')+"</option>").attr({'value':value.get('categoryId'),}).appendTo($("select[class='sub-category']"));
+                });
+<!--                for(let [key, value] of subCategoryList){-->
+<!--                    console.log("key   :"+value.get('categoryId'));-->
+<!--                    console.log("value :"+value.get('categoryNm'));-->
+<!--                }-->
+            }
+
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="blog-section">
+
+    <form role="form" method="post" th:action="@{'/posts/'+${postFormDto.blogNm}+'/new'}"  class="blog-post-form"
+          th:object="${postFormDto}" onsubmit="return validCheck()">
+        <div class="form-group">
+            <div class="">
+                <input class="post-title-input" id="post-title" name="postFormDto.postDto.title"
+                       placeholder="제목"></input>
+            </div>
+            <div>
+                <select class="hierarchy" name="postFormDto.categoryDtoList" id="a" data-target="second">
+                    <option th:each="categoryList : ${postFormDto.categoryDtoList}"
+                            th:if="${categoryList.depth != T(com.example.myblog.constant.CategoryType).SUB}"
+                            th:value="${categoryList.categoryId}"
+                            th:text="${categoryList.categoryNm}">
+                    </option>
+                </select>
+                <select class="sub-category" th:field="*{postDto.categoryId}">
+                </select>
+
+            </div>
+            <div class="form-group">
+                <div class="input-area">
+                    <textarea class="post-editor" id="editor" th:name="postDto.contentUrl"></textarea>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">만들기</button>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    </form>
+<!--    <button type="button" onclick="falseSubmit()"></button>-->
+<!--    <div id="imgAttrChange" style="display:none;">-->
+
+<!--    </div>-->
+</div>
+<th:block layout:fragment="post-script">
+    <script th:inline="javascript">
+    ClassicEditor.create(document.querySelector("#editor"), {
+        placeholder: '본문',
+        extraPlugins:[MyCustomUploadAdapterPlugin],
+        language: 'ko',
+        heading: {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+                { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+                { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+            ]
+        },
+        fontFamily: {
+            options: [
+                'default',
+                'Arial, Helvetica, sans-serif',
+                'Courier New, Courier, monospace',
+                'Georgia, serif',
+                'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                'Tahoma, Geneva, sans-serif',
+                'Times New Roman, Times, serif',
+                'Trebuchet MS, Helvetica, sans-serif',
+                'Verdana, Geneva, sans-serif'
+            ],
+            supportAllValues: true
+        },
+        fontSize: {
+            options: [10, 12, 14, 'default', 18, 20, 22],
+            supportAllValues: true
+        },
+        })
+        .then( editor => {
+            window.editor = editor;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        function MyCustomUploadAdapterPlugin(editor){
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                console.log(loader,[[${postFormDto.blogNm}]]);
+                return new UploadAdapter(loader, [[${postFormDto.blogNm}]], $("meta[name='_csrf_header']").attr("content"), $("meta[name='_csrf']").attr("content"));
+            }
+
+        }
+<!--            function validCheck(){-->
+<!--&lt;!&ndash;                console.log($("#editor").val());&ndash;&gt;-->
+<!--&lt;!&ndash;                console.log($(".input-area").find('img'));&ndash;&gt;-->
+<!--&lt;!&ndash;                $(".input-area").find('img').each(function(){&ndash;&gt;-->
+<!--&lt;!&ndash;                    console.log($(this).attr('src'));&ndash;&gt;-->
+<!--&lt;!&ndash;                    $(this).attr({&ndash;&gt;-->
+<!--&lt;!&ndash;                        name:'postImgDtoList.postImgDto.imgName',&ndash;&gt;-->
+<!--&lt;!&ndash;                    })&ndash;&gt;-->
+<!--&lt;!&ndash;                })&ndash;&gt;-->
+<!--                falseSubmit();-->
+<!--                return false;-->
+<!--            }-->
+<!--            function falseSubmit(){-->
+<!--                var txt = window.editor.getData();-->
+<!--                $('#imgAttrChange').append(txt);-->
+<!--                $('#imgAttrChange').find('img').each(function(){-->
+<!--                    $(this).attr({-->
+<!--                        name:'postImgDtoList.postImgDto.imgName',-->
+<!--                    });-->
+<!--                });-->
+<!--                var ch = document.getElementById('imgAttrChange').innerHTML;-->
+<!--                console.log("Type:"+typeof(ch));-->
+<!--                $('#editor').val(ch);-->
+<!--                console.log(ch);-->
+<!--                $('#imgAttrChange').empty();-->
+
+<!--                return false;-->
+<!--            }-->
+
+
+    </script>
+</th:block>
+</html>
+
