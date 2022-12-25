@@ -98,15 +98,15 @@
             </div>
             <div class="form-group">
                 <div class="input-area">
-                    <textarea class="post-editor" id="editor" th:name="postDto.contentUrl"></textarea>
+                    <textarea class="post-editor" id="editor"></textarea>
                 </div>
             </div>
         </div>
         <button type="submit" class="btn btn-primary">만들기</button>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <textarea th:name="postDto.contentUrl" id="submitTextArea" style="display:none;"></textarea>
     </form>
-<!--    <button type="button" onclick="falseSubmit()"></button>-->
-<!--    <div id="imgAttrChange" style="display:none;">-->
+    <div id="imgAttrChange" style="display:none;">
 
 <!--    </div>-->
 </div>
@@ -152,41 +152,44 @@
         .catch(error => {
             console.log(error);
         });
+        let blogNm = [[${postFormDto.blogNm}]];
         function MyCustomUploadAdapterPlugin(editor){
             editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                console.log(loader,[[${postFormDto.blogNm}]]);
-                return new UploadAdapter(loader, [[${postFormDto.blogNm}]], $("meta[name='_csrf_header']").attr("content"), $("meta[name='_csrf']").attr("content"));
+                console.log(loader,blogNm);
+                return new UploadAdapter(loader, blogNm, $("meta[name='_csrf_header']").attr("content"), $("meta[name='_csrf']").attr("content"));
             }
 
         }
-<!--            function validCheck(){-->
-<!--&lt;!&ndash;                console.log($("#editor").val());&ndash;&gt;-->
-<!--&lt;!&ndash;                console.log($(".input-area").find('img'));&ndash;&gt;-->
-<!--&lt;!&ndash;                $(".input-area").find('img').each(function(){&ndash;&gt;-->
-<!--&lt;!&ndash;                    console.log($(this).attr('src'));&ndash;&gt;-->
-<!--&lt;!&ndash;                    $(this).attr({&ndash;&gt;-->
-<!--&lt;!&ndash;                        name:'postImgDtoList.postImgDto.imgName',&ndash;&gt;-->
-<!--&lt;!&ndash;                    })&ndash;&gt;-->
-<!--&lt;!&ndash;                })&ndash;&gt;-->
-<!--                falseSubmit();-->
-<!--                return false;-->
-<!--            }-->
-<!--            function falseSubmit(){-->
-<!--                var txt = window.editor.getData();-->
-<!--                $('#imgAttrChange').append(txt);-->
-<!--                $('#imgAttrChange').find('img').each(function(){-->
-<!--                    $(this).attr({-->
-<!--                        name:'postImgDtoList.postImgDto.imgName',-->
-<!--                    });-->
-<!--                });-->
-<!--                var ch = document.getElementById('imgAttrChange').innerHTML;-->
-<!--                console.log("Type:"+typeof(ch));-->
-<!--                $('#editor').val(ch);-->
-<!--                console.log(ch);-->
-<!--                $('#imgAttrChange').empty();-->
+            function validCheck(){
+                let attrInsertToImg = window.editor.getData();
+                $('#submitTextArea').empty();
+                $('#submitTextArea').append(attrInsertToImg);
+                $("#submitTextArea").find('img').each(function(){
+                    let changeImgSrc = $(this).attr('src');
 
-<!--                return false;-->
-<!--            }-->
+                    changeImgSrc = imgSrcProcessing(changeImgSrc);
+                    $(this).attr({
+                        name:'postImgDtoList.postImgDto.imgName',
+                        src:changeImgSrc,
+                    })
+                })
+                window.editor.setData('');
+                attrInsertToImg = document.getElementById('submitTextArea').innerHTML;
+                $('#submitTextArea').empty();
+                let textVal = document.getElementById('submitTextArea');
+                textVal.value = attrInsertToImg;
+                return false;
+            }
+
+            function imgSrcProcessing(imgSrc){
+                console.log(imgSrc);
+                var imgIndex = imgSrc.search(blogNm+'/')+(blogNm.length+1);
+                var imgName = imgSrc.substring(imgIndex);
+                console.log('imgName:'+imgName);
+                var newImgName = imgSrc.substring(0, (imgSrc.search('post/')+5)) + blogNm +'/images/' + imgName ;
+                console.log('newImgName:'+newImgName);
+                return newImgName;
+            }
 
 
     </script>

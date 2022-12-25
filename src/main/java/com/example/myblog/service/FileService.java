@@ -31,4 +31,16 @@ public class FileService {
             log.info("파일이 존재하지 않습니다.");
         }
     }
+
+    public File makePath(String path){
+        File folder = new File(path);
+        if (!folder.exists()) {
+            try {
+                folder.mkdirs();
+            } catch (Exception e) {
+                e.getStackTrace();
+            }
+        }
+        return folder;
+    }
 }

@@ -47,15 +47,7 @@ public class ImgService {
         String imgName = "";
         String imgUrl = "";
         typeCheck(imgSaveTypeDto.getType());
-        File folder = new File(imgLocation + "/" + imgSaveTypeDto.getName());
-        if (!folder.exists()) {
-            try {
-                folder.mkdirs();
-                System.out.println(imgSaveTypeDto.getName() + "의 신규폴더 생성");
-            } catch (Exception e) {
-                e.getStackTrace();
-            }
-        }
+        File folder = fileService.makePath(imgLocation + "/" + imgSaveTypeDto.getName());
         if (!StringUtils.isEmpty(oriImgName)) {
             imgName = fileService.uploadFile(folder.getPath(), oriImgName, imgFile.getBytes());
             imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgSaveTypeDto.getName() + "/" + imgName;

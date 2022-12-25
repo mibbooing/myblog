@@ -22,6 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 @RequestMapping("/posts")
@@ -69,13 +72,16 @@ public class PostController {
             return new ResponseEntity<String>("파일이 없습니다.", HttpStatus.BAD_REQUEST);
         }
         String fileName;
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         try{
-            fileName = fileService.uploadFile("C:/myblog/member", upload.getOriginalFilename(), upload.getBytes());
+            File folder = fileService.makePath("C:/myblog/post/temp/"+sdf.format(now)+blogNm+"/");
+            fileName = fileService.uploadFile(folder.getPath(), upload.getOriginalFilename(), upload.getBytes());
         }catch (Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         JsonObject obj = new JsonObject();
-        obj.addProperty("url","/images/member/"+fileName);
+        obj.addProperty("url","/images/post/temp/"+sdf.format(now)+blogNm+"/"+fileName);
         HttpHeaders header = new HttpHeaders();
         header.add("Content-Type", "application/json; charset=UTF-8");
         return new ResponseEntity<>(obj.toString(),header,HttpStatus.OK);
