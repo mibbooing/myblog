@@ -439,13 +439,16 @@ img{
 .blog-main .blog-section .blog-post-form .ck-editor__editable{
     height: 30rem;
 }
-.blog-main .blog-section .blog-post-form input:focus{
-    border-radius: 0%;
-    border-color: #2977ff;
-    outline: none;
-    margin-bottom: 0px;
+.blog-main .blog-section .blog-post-form input:focus,
+.blog-main .blog-section .blog-post-form select:focus, select:active{
+    border-radius: 0% !important;
+    border-color: #2977ff !important;
+    outline: none !important;
+    box-shadow: none !important;
+    z-index: 5;
+    position: relative;
 }
-.post-title-input{
+.post-input{
     display: block;
     width: 100%;
     border: 1px solid #ccced1;
@@ -453,6 +456,27 @@ img{
     font-size: 1rem;
     padding: 10px;
 }
+.post-input-category{
+    display: inline-block !important;
+    width: 100% !important;
+    border: 1px solid #ccced1 !important;
+    margin-bottom: -1px !important;
+    font-size: 1rem !important;
+    padding: 10px !important;
+    border-radius: 0% !important;
+}
+.post-category{
+    display: flex;
+    width: 100%;
+}
+.post-category div{
+    width: 50%;
+}
+.form-floating label{
+    z-index: 6;
+    transform: scale(.7) translateY(-0.8rem) translateX(0.15rem) !important;
+}
+
 
 
 

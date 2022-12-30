@@ -1,5 +1,6 @@
 package com.example.myblog.entity;
 
+import com.example.myblog.dto.ImgDto;
 import com.example.myblog.dto.PostImgDto;
 import lombok.Getter;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 public class PostImg {
     @Id
     @Column(name = "post_img_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String imgName;
@@ -26,6 +28,14 @@ public class PostImg {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public PostImg(ImgDto imgDto, Post post) {
+        this.imgUrl = imgDto.getImgUrl();
+        this.imgName = imgDto.getImgName();
+        this.oriImgName = imgDto.getOriImgName();
+        this.repimgYn = imgDto.getRepimgYn();
+        this.post = post;
+    }
 
     public void createPostImg(PostImgDto postImgDto, Post post) {
         this.imgName = postImgDto.getImgName();

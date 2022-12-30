@@ -26,11 +26,17 @@ public class Post extends BaseEntity {
     @Lob
     private String contentUrl;
 
+    @Enumerated(EnumType.STRING)
     private PostStatus postStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    public void createEmptyPost(Blog blog, Category category){
+        this.blog = blog;
+        this.category = category;
+    }
 
     public void createPost(PostDto postDto, Blog blog, Category category) {
         this.title = postDto.getTitle();

@@ -1,5 +1,6 @@
 package com.example.myblog.dto;
 
+import com.example.myblog.constant.PostStatus;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,7 @@ public class PostFormDto {
     private List<PostImgDto> postImgDtoList = new ArrayList<>();
 
     private List<CategoryDto> categoryDtoList = new ArrayList<>();
+
+    private List<PostStatus> postStatusList = new ArrayList<>();
 
 }

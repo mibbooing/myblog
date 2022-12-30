@@ -219,7 +219,7 @@
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
                 var returnVal;
-                var url = "/blogs/category/new";
+                var url = "/blogs/new/category";
                 var paramData = {
                     blogNm : $("#blogNm").val()
                 };
@@ -306,7 +306,7 @@
 
 <div layout:fragment="content">
     <wrapper class="blog-config-wrapper justify-content-center">
-        <form role="form" method="post" th:action="@{'/blogs/' + ${blogMyPageFormDto.blogInfoFormDto.blogNm} + '/myPage'}" enctype="multipart/form-data" th:object="${blogMyPageFormDto}" onsubmit="return validCheck()">
+        <form role="form" method="post" th:action="@{'/blogs/myPage/' + ${blogMyPageFormDto.blogInfoFormDto.blogNm}}" enctype="multipart/form-data" th:object="${blogMyPageFormDto}" onsubmit="return validCheck()">
             <div class="blog-prifile-info" th:object="${blogMyPageFormDto.blogInfoFormDto}">
                 <div>
                     <input type="hidden" th:field="*{blogId}">

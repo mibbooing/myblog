@@ -2,6 +2,7 @@ package com.example.myblog.service;
 
 import com.example.myblog.constant.CategoryType;
 import com.example.myblog.constant.LogType;
+import com.example.myblog.constant.Role;
 import com.example.myblog.dto.*;
 import com.example.myblog.entity.*;
 import com.example.myblog.repository.*;
@@ -27,6 +28,7 @@ public class BlogService {
     private final BlogImgRepository blogImgRepository;
 
     private final CategoryRepository categoryRepository;
+    private final BlogAuthRepository blogAuthRepository;
     private final ImgService imgService;
 
     public Blog saveBlog(BlogFormDto blogFormDto, String email){
@@ -36,7 +38,13 @@ public class BlogService {
             throw new IllegalStateException("블로그 주제를 선택해주세요.");
         }
         Blog blog = Blog.createBlog(blogFormDto, member, topicRepository.findById(blogFormDto.getTopicId()).orElseThrow(IllegalAccessError::new));
-        return blogRepository.save(blog);
+        blog = blogRepository.save(blog);
+        createBlogAuth(blog, member, Role.ADMIN);
+        return blog;
+    }
+
+    public void createBlogAuth(Blog blog, Member member, Role role){
+        blogAuthRepository.save(new BlogAuth(blog, member, role));
     }
 
     public void validateDuplicateBlog(String BlogNm){
@@ -49,8 +57,12 @@ public class BlogService {
 
     public BlogInfoFormDto getMyBlogForm(String blogNm){
         BlogInfoFormDto blogInfoFormDto = blogRepository.findByBlogNmAndRepImgYn(blogNm, "Y");
+        if(blogInfoFormDto == null){
+            blogInfoFormDto = new BlogInfoFormDto();
+        }
         List<Topic> topicList = topicRepository.findAll();
         blogInfoFormDto.setTopicList(topicList);
+
         return blogInfoFormDto;
     }
 

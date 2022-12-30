@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
                         .logoutSuccessUrl("/home");
         http.authorizeRequests()
-                .mvcMatchers("/", "/home","/members/**","/errors/*").permitAll()
-                .anyRequest().authenticated();
+                .mvcMatchers("/", "/home","/members/login","/members/new","/errors/*","/blogs/main/**","/blogs/*/category/**").permitAll()
+                .anyRequest().access("@authorizationChecker.checkAuth(request, authentication)");
         http.exceptionHandling()
                 .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());

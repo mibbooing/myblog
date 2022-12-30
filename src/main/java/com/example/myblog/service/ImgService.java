@@ -1,26 +1,23 @@
 package com.example.myblog.service;
 
-import com.example.myblog.dto.BlogImgDto;
-import com.example.myblog.dto.BlogInfoFormDto;
-import com.example.myblog.dto.ImgDto;
-import com.example.myblog.dto.ImgSaveTypeDto;
-import com.example.myblog.entity.Blog;
-import com.example.myblog.entity.BlogImg;
-import com.example.myblog.entity.Member;
-import com.example.myblog.entity.MemberImg;
+import com.example.myblog.dto.*;
+import com.example.myblog.entity.*;
 import com.example.myblog.repository.BlogImgRepository;
 import com.example.myblog.repository.MemberImgRepository;
 import com.example.myblog.repository.MemberRepository;
+import com.example.myblog.repository.PostImgRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,6 +29,8 @@ public class ImgService {
     private String memberImgLocation;
     @Value("${blogImgLocation}")
     private String blogImgLocation;
+    @Value("${postImgLocation}")
+    private String postImgLocation;
 
     private String imgLocation;
 
@@ -41,19 +40,28 @@ public class ImgService {
 
     private final BlogImgRepository blogImgRepository;
 
+    private final PostImgRepository postImgRepository;
+
 
     public void saveImg(ImgSaveTypeDto imgSaveTypeDto, MultipartFile imgFile, Map<String, Object> map) throws Exception {
-        String oriImgName = imgFile.getOriginalFilename();
-        String imgName = "";
-        String imgUrl = "";
-        typeCheck(imgSaveTypeDto.getType());
-        File folder = fileService.makePath(imgLocation + "/" + imgSaveTypeDto.getName());
-        if (!StringUtils.isEmpty(oriImgName)) {
-            imgName = fileService.uploadFile(folder.getPath(), oriImgName, imgFile.getBytes());
-            imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgSaveTypeDto.getName() + "/" + imgName;
+        if(imgFile == null){
+            for(PostImgDto postImgDto : (List<PostImgDto>)map.get("postImgDtoList")) {
+                ImgDto imgDto = new ImgDto(null, postImgDto.getImgName(), postImgDto.getOriImgName(), postImgDto.getImgUrl(), postImgDto.getRepimgYn());
+                saveExec(imgSaveTypeDto.getType(), imgDto, map);
+            }
+        }else {
+            String oriImgName = imgFile.getOriginalFilename();
+            String imgName = "";
+            String imgUrl = "";
+            typeCheck(imgSaveTypeDto.getType());
+            File folder = fileService.makePath(imgLocation + "/" + imgSaveTypeDto.getName());
+            if (!StringUtils.isEmpty(oriImgName)) {
+                imgName = fileService.uploadFile(folder.getPath(), oriImgName, imgFile.getBytes());
+                imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgSaveTypeDto.getName() + "/" + imgName;
+            }
+            ImgDto imgDto = new ImgDto(null, imgName, oriImgName, imgUrl, "Y");
+            saveExec(imgSaveTypeDto.getType(), imgDto, map);
         }
-        ImgDto imgDto = new ImgDto(null, imgName, oriImgName, imgUrl, "Y");
-        saveExec(imgSaveTypeDto.getType(), imgDto, map);
     }
 
     public void updateImg(ImgDto imgDto, ImgSaveTypeDto imgSaveTypeDto, MultipartFile imgFile, Map<String, Object> map) throws Exception {
@@ -92,6 +100,10 @@ public class ImgService {
             case "blog":
                 BlogImg blogImg = new BlogImg(imgDto, (Blog) map.get("blog"));
                 blogImgRepository.save(blogImg);
+                break;
+            case "post":
+                PostImg postImg = new PostImg(imgDto, (Post) map.get("post"));
+                postImgRepository.save(postImg);
                 break;
         }
     }

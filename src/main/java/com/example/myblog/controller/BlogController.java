@@ -1,9 +1,7 @@
 package com.example.myblog.controller;
 
-import com.example.myblog.constant.LogType;
 import com.example.myblog.dto.*;
 import com.example.myblog.entity.Category;
-import com.example.myblog.entity.Topic;
 import com.example.myblog.service.BlogService;
 import com.example.myblog.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +31,7 @@ public class BlogController {
     public String blogForm(BlogFormDto blogFormDto,Model model){
         blogFormDto = blogService.getBlogForm();
         model.addAttribute("blogFormDto", blogFormDto);
-        return "blog/blogForm";
+        return "blog/createBlogForm";
     }
 
     @PostMapping(value = "/new")
@@ -45,7 +43,7 @@ public class BlogController {
             for(String key : validatorResult.keySet()){
                 model.addAttribute(key, validatorResult.get(key));
             }
-            return "blog/blogForm";
+            return "blog/createBlogForm";
         }
         try {
             blogService.saveBlog(blogFormDto, principal.getName());
@@ -54,25 +52,26 @@ public class BlogController {
             blogFormDto = blogService.getBlogForm();
             model.addAttribute("blogFormDto", blogFormDto);
             model.addAttribute("errorMessage", e.getMessage());
-            return "blog/blogForm";
+            return "blog/createBlogForm";
         }
         return "redirect:/home";
     }
 
-    @GetMapping(value = "/{blogNm}")
+    @GetMapping(value = "/main/{blogNm}")
     public String getBlogMain(){
-        return "blog/main";
+        return "blog/blogForm";
     }
 
-    @GetMapping(value = "/{blogNm}/myPage")
+    @GetMapping(value = "/myPage/{blogNm}")
     public String getBlogMyPage(@PathVariable("blogNm")String blogNm,Model model) {
-        LogTypeSet logTypeSet = new LogTypeSet();
+        System.out.println(blogNm);
+        TypeSet logTypeSet = new TypeSet();
         BlogMyPageFormDto blogMyPageFormDto = new BlogMyPageFormDto(blogService.getMyBlogForm(blogNm), categoryService.getCategory(blogNm), logTypeSet.createLogTypeSet());
         model.addAttribute("blogMyPageFormDto", blogMyPageFormDto);
         return "blog/myPage";
     }
 
-    @PostMapping(value = "/{blogNm}/myPage")
+    @PostMapping(value = "/myPage/{blogNm}")
     public String updateBlogMyPage(@PathVariable("blogNm")String blogNm, @ModelAttribute BlogMyPageFormDto blogMyPageFormDto, @RequestParam("blogImgFile") MultipartFile multipartFile, Model model) {
         System.out.println("블로그ID: " + blogMyPageFormDto.getBlogInfoFormDto().getBlogId());
         List<CategoryDto> list = blogMyPageFormDto.getCategoryDtoList();
@@ -90,7 +89,7 @@ public class BlogController {
         return "redirect:/home";
     }
 
-    @PostMapping(value = "/category/new")
+    @PostMapping(value = "/new/category")
     @ResponseBody
     public ResponseEntity createCategory(@RequestBody Map<String, Object> paramMap) {
         if(paramMap.get("blogNm") == null){
@@ -107,29 +106,29 @@ public class BlogController {
         return new ResponseEntity<Long>(category.getId(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{blogNm}/{category}")
+    @GetMapping(value = "/{blogNm}/category/{category}")
     public String getPostsList(){
         return "blog/list";
     }
-
-    @GetMapping(value = "/posts/new")
-    public String postsForm(){
-        return "blog/postForm";
-    }
-
-    @PostMapping(value = "/posts/new")
-    public String createPosts(){
-        return "blog/list";
-    }
-
-    @PatchMapping(value = "/{blogNm}/{postsId}")
-    public String updatePosts(){
-        return "blog/list";
-    }
-
-    @DeleteMapping(value = "/{blogNm}/{postsId}")
-    public String deletePosts(){
-        return "blog/list";
-    }
+//
+//    @GetMapping(value = "/posts/new")
+//    public String postsForm(){
+//        return "blog/postForm";
+//    }
+//
+//    @PostMapping(value = "/posts/new")
+//    public String createPosts(){
+//        return "blog/list";
+//    }
+//
+//    @PatchMapping(value = "/{blogNm}/{postsId}")
+//    public String updatePosts(){
+//        return "blog/list";
+//    }
+//
+//    @DeleteMapping(value = "/{blogNm}/{postsId}")
+//    public String deletePosts(){
+//        return "blog/list";
+//    }
 
 }

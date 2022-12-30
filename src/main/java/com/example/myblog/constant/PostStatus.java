@@ -4,5 +4,6 @@ public enum PostStatus {
     PUBLIC,
     PERMITTED,
     HIDE,
-    DELETE
+    DELETE,
+    TEMP
 }

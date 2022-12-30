@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -29,6 +31,30 @@ public class FileService {
             log.info("파일을 삭제하였습니다.");
         } else{
             log.info("파일이 존재하지 않습니다.");
+        }
+    }
+
+    public void replaceImgPath(String reqTargetPath, String reqDestPath){
+        System.out.println("targetPath: "+reqTargetPath + "  destPath: "+reqDestPath);
+        File targetPath = new File(reqTargetPath);
+        File destPath = new File(reqDestPath);
+        if(!(destPath.exists())){
+            destPath = makePath(reqDestPath);
+            System.out.println(destPath.getPath());
+        }
+        try {
+            if (targetPath.exists()) {
+                File[] fileList = targetPath.listFiles();
+                for (int i = 0; i < fileList.length; i++) {
+                    if (fileList[i].exists()) {
+                        File moveFile = new File(destPath, fileList[i].getName());
+                        fileList[i].renameTo(moveFile);
+                        System.out.println("new path : "+ fileList[i].getPath() + "  ,  " + fileList[i].getName());
+                    }
+                }
+            }
+        }catch (Exception e){
+
         }
     }
 

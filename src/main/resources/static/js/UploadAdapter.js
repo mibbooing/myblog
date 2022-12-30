@@ -16,7 +16,7 @@ class UploadAdapter {
 
     _initRequest() {
         const xhr = this.xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/posts/'+this.blogNm+'/upload', true);
+        xhr.open('POST', 'http://localhost:8080/posts/upload/'+this.blogNm, true);
         xhr.setRequestHeader(this.header, this.token);
         xhr.responseType = 'json';
     }
@@ -33,9 +33,12 @@ class UploadAdapter {
             if(!response || response.error) {
                 return reject( response && response.error ? response.error.message : genericErrorText );
             }
-            console.log(response.url);
+            console.log("responseUrl: "+response.url);
             resolve({
-                default: response.url //업로드된 파일 주소
+                default: response.url, //업로드된 파일 주소
+                oriImgName: response.oriImgName,
+                tempUrl: response.tempUrl,
+                imgName: response.imgName,
             })
         })
     }
