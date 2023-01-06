@@ -21,4 +21,11 @@ public class Topic {
         this.id = id;
         this.topicName = topicName;
     }
+
+    public Topic() {
+    }
+
+    public Topic(String topicName) {
+        this.topicName = topicName;
+    }
 }

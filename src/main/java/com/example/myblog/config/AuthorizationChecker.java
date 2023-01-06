@@ -1,49 +1,49 @@
 package com.example.myblog.config;
 
 
-import com.example.myblog.entity.Member;
+import com.example.myblog.constant.AccessAuthType;
+import com.example.myblog.constant.PostStatus;
+import com.example.myblog.constant.Role;
+import com.example.myblog.entity.*;
+import com.example.myblog.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
+@Transactional
 public class AuthorizationChecker {
+    /*
+     * 추가될 기능에 대한(COMMENT, ??) 권한 인가 로직 작성 필요!
+     * */
 
-    public boolean checkAuth(HttpServletRequest request, Authentication authentication) {
-        Object principalObj = authentication.getPrincipal();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        if (!(principalObj instanceof UserDetails) && request.getMethod().equals("GET")) {
-            if(antPathMatcher.match("/posts/*/*", request.getRequestURI())){
+    private final MemberRepository memberRepository;
+    private final BlogRepository blogRepository;
+    private final PostRepository postRepository;
+    private final BlogAuthRepository blogAuthRepository;
+    private final AccessAuthRepository accessAuthRepository;
+
+    public boolean checkBlogAuth(String blogNm, String username) {
+        try {
+            BlogAuth blogAuth = blogAuthRepository.findByBlogNmAndMemberEmail(blogNm, username);
+            if (blogAuth.getRole().equals(Role.ADMIN)) {
                 return true;
             }
-            System.out.println("로그인되지 않은 사용자 접근");
-            return false;
+        } catch (Exception e) {
+            if(e instanceof NullPointerException){
+                System.out.println("검색실패");
+                throw new NullPointerException("권한검색실패");
+            }
         }
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        if (antPathMatcher.match("/blogs/**", request.getRequestURI())) {
-            /*블로그 접근 권한이 없다면 불가능*/
-            System.out.println(getParamFromPath(request.getRequestURI()));
-        }
-        if (antPathMatcher.match("/posts/**", request.getRequestURI())) {
-            /*블로그 접근 권한이 없다면 불가능*/
-
-        }
-        System.out.println(request.getRequestURI());
-        return true;
-    }
-
-    private String getParamFromPath(String path){
-        if(path.contains("/myPage/")){
-            int idx = path.indexOf("/myPage/")+("/myPage/").length();
-            path = path.substring(idx);
-        }
-        return path;
+        return false;
     }
 }

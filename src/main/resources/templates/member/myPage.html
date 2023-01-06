@@ -65,7 +65,7 @@
               th:object="${memberInfoFormDto}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div class="member-profile-img">
-                <input type="hidden" name="id" th:value="*{id}">
+                <input type="hidden" name="id" th:value="${id}">
                 <input th:if="*{imgUrl != null}" class="member-img-input" type="file" name="memberImgFile" th:value="*{imgUrl}">
                 <input th:unless="*{imgUrl != null}" class="member-img-input" type="file" name="memberImgFile">
                 <button class="member-img-change-btn btn_none-style" type="button" onclick="$('.member-img-input').trigger('click');">

@@ -23,10 +23,10 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<BlogListDto> findAllBlogDtoList(Long memberId);
 
     @Query("select new com.example.myblog.dto.BlogInfoFormDto(b.id, i.id, b.blogNm, b.topic.id, i.imgName, i.oriImgName, i.imgUrl, i.repimgYn) " +
-            "from BlogImg i left join i.blog b " +
+            "from BlogImg i right join i.blog b " +
             "on b.id = i.blog.id " +
             "and i.repimgYn = :repimgYn " +
-            "and b.blogNm = :blogNm"
+            "where b.blogNm = :blogNm"
     )
     BlogInfoFormDto findByBlogNmAndRepImgYn(String blogNm, String repimgYn);
 

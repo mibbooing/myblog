@@ -16,7 +16,7 @@ class UploadAdapter {
 
     _initRequest() {
         const xhr = this.xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/posts/upload/'+this.blogNm, true);
+        xhr.open('POST', 'http://localhost:8080/async/posts/upload/'+this.blogNm, true);
         xhr.setRequestHeader(this.header, this.token);
         xhr.responseType = 'json';
     }

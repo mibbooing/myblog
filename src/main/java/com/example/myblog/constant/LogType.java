@@ -1,5 +1,7 @@
 package com.example.myblog.constant;
 
-public enum LogType {
-    CREATE, UPDATE, DELETE
+public enum LogType {       //로그 구분
+    CREATE,
+    UPDATE,
+    DELETE
 }

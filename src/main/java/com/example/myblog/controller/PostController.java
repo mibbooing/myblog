@@ -69,50 +69,55 @@ public class PostController {
         return "redirect:/home";
     }
 
-    @PostMapping(value = "/upload/{blogNm}")
-    @ResponseBody
-    public ResponseEntity<String> imageUpload(@PathVariable("blogNm")String blogNm, MultipartFile upload, HttpServletResponse res, HttpServletRequest req){
-        if(upload.isEmpty()){
-            return new ResponseEntity<String>("파일이 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-        String fileName;
-        Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        try{
-            File folder = fileService.makePath("C:/myblog/post/temp/"+sdf.format(now)+"/"+blogNm+"/");
-            fileName = fileService.uploadFile(folder.getPath(), upload.getOriginalFilename(), upload.getBytes());
-        }catch (Exception e){
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        JsonObject obj = new JsonObject();
-        obj.addProperty("url","/images/post/temp/"+sdf.format(now)+"/"+blogNm+"/"+fileName);
-        obj.addProperty("oriImgName", upload.getOriginalFilename());
-        obj.addProperty("tempUrl", "/temp/"+sdf.format(now)+"/"+blogNm+"/");
-        obj.addProperty("imgName", fileName);
-        HttpHeaders header = new HttpHeaders();
-        header.add("Content-Type", "application/json; charset=UTF-8");
-        return new ResponseEntity<>(obj.toString(),header,HttpStatus.OK);
+//    @PostMapping(value = "/upload/{blogNm}")
+//    @ResponseBody
+//    public ResponseEntity<String> imageUpload(@PathVariable("blogNm")String blogNm, MultipartFile upload, HttpServletResponse res, HttpServletRequest req){
+//        if(upload.isEmpty()){
+//            return new ResponseEntity<String>("파일이 없습니다.", HttpStatus.BAD_REQUEST);
+//        }
+//        String fileName;
+//        Date now = new Date();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//        try{
+//            File folder = fileService.makePath("C:/myblog/post/temp/"+sdf.format(now)+"/"+blogNm+"/");
+//            fileName = fileService.uploadFile(folder.getPath(), upload.getOriginalFilename(), upload.getBytes());
+//        }catch (Exception e){
+//            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//        JsonObject obj = new JsonObject();
+//        obj.addProperty("url","/images/post/temp/"+sdf.format(now)+"/"+blogNm+"/"+fileName);
+//        obj.addProperty("oriImgName", upload.getOriginalFilename());
+//        obj.addProperty("tempUrl", "/temp/"+sdf.format(now)+"/"+blogNm+"/");
+//        obj.addProperty("imgName", fileName);
+//        HttpHeaders header = new HttpHeaders();
+//        header.add("Content-Type", "application/json; charset=UTF-8");
+//        return new ResponseEntity<>(obj.toString(),header,HttpStatus.OK);
+//    }
+//
+//    @PostMapping(value = "/preProcessing/{blogNm}")
+//    @ResponseBody
+//    public ResponseEntity<String> imageReplacePath(@PathVariable("blogNm")String blogNm, @RequestBody Map<String, Object> paramMap){
+//        if(blogNm.isEmpty()){
+//            return new ResponseEntity<String>("blogName null!", HttpStatus.BAD_REQUEST);
+//        }
+//        JsonObject obj = new JsonObject();
+//        try{
+//            Post emptyPost = postService.createPost(blogNm);
+//            String reqTargetPath = "C:/myblog/post/"+(String)paramMap.get("imgTempUrl")+"/";
+//            String reqDestPath = "C:/myblog/post/"+blogNm+"/"+emptyPost.getId()+"/";
+//            fileService.replaceImgPath(reqTargetPath, reqDestPath);
+//            String imgUrl = "/images/post/"+blogNm+"/"+emptyPost.getId()+"/";
+//            System.out.println("PostId : "+imgUrl);
+//            obj.addProperty("postId", emptyPost.getId());
+//            obj.addProperty("imgUrl", imgUrl);
+//        }catch (Exception e){
+//            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
+//    }
+    @GetMapping(value = "/details/{postNum}")
+    public String getPostDetail(@PathVariable("postNum")String postNum, Model model){
+        return "redirect:/home";
     }
 
-    @PostMapping(value = "/preProcessing/{blogNm}")
-    @ResponseBody
-    public ResponseEntity<String> imageReplacePath(@PathVariable("blogNm")String blogNm, @RequestBody Map<String, Object> paramMap){
-        if(blogNm.isEmpty()){
-            return new ResponseEntity<String>("blogName null!", HttpStatus.BAD_REQUEST);
-        }
-        JsonObject obj = new JsonObject();
-        try{
-            Post emptyPost = postService.createPost(blogNm);
-            String reqTargetPath = "C:/myblog/post/"+(String)paramMap.get("imgTempUrl")+"/";
-            String reqDestPath = "C:/myblog/post/"+blogNm+"/"+emptyPost.getId()+"/";
-            fileService.replaceImgPath(reqTargetPath, reqDestPath);
-            String imgUrl = "/images/post/"+blogNm+"/"+emptyPost.getId()+"/";
-            System.out.println("PostId : "+imgUrl);
-            obj.addProperty("postId", emptyPost.getId());
-            obj.addProperty("imgUrl", imgUrl);
-        }catch (Exception e){
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
-    }
 }

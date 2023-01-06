@@ -3,6 +3,7 @@ package com.example.myblog.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -13,6 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -28,8 +30,8 @@ public class SecurityConfig {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
                         .logoutSuccessUrl("/home");
         http.authorizeRequests()
-                .mvcMatchers("/", "/home","/members/login","/members/new","/errors/*","/blogs/main/**","/blogs/*/category/**").permitAll()
-                .anyRequest().access("@authorizationChecker.checkAuth(request, authentication)");
+                .mvcMatchers("/", "/home","/members/login","/members/login/error","/members/new","/errors/*","/blogs/main/**","/blogs/*/category/**").permitAll()
+                .anyRequest().authenticated();
         http.exceptionHandling()
                 .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());

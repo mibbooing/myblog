@@ -29,6 +29,8 @@ public class BlogAuth extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public BlogAuth() {}
+
     public BlogAuth(Blog blog, Member member, Role role) {
         this.blog = blog;
         this.member = member;

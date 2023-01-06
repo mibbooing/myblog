@@ -7,6 +7,7 @@ import com.example.myblog.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -63,8 +64,8 @@ public class BlogController {
     }
 
     @GetMapping(value = "/myPage/{blogNm}")
-    public String getBlogMyPage(@PathVariable("blogNm")String blogNm,Model model) {
-        System.out.println(blogNm);
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
+    public String getBlogMyPage(@PathVariable("blogNm")String blogNm,Model model,Principal principal) {
         TypeSet logTypeSet = new TypeSet();
         BlogMyPageFormDto blogMyPageFormDto = new BlogMyPageFormDto(blogService.getMyBlogForm(blogNm), categoryService.getCategory(blogNm), logTypeSet.createLogTypeSet());
         model.addAttribute("blogMyPageFormDto", blogMyPageFormDto);
@@ -87,23 +88,6 @@ public class BlogController {
             return "blog/myPage";
         }
         return "redirect:/home";
-    }
-
-    @PostMapping(value = "/new/category")
-    @ResponseBody
-    public ResponseEntity createCategory(@RequestBody Map<String, Object> paramMap) {
-        if(paramMap.get("blogNm") == null){
-            return new ResponseEntity<String>("카테고리 생성에 실패하였습니다.", HttpStatus.BAD_REQUEST);
-        }
-        String blogId = paramMap.get("blogNm").toString();
-        Category category;
-        try{
-            category = categoryService.createMainCategory(blogId);
-        }catch (IllegalStateException e){
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        System.out.println(category.getId());
-        return new ResponseEntity<Long>(category.getId(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{blogNm}/category/{category}")

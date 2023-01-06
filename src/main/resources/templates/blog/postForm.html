@@ -151,7 +151,6 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <textarea th:name="postDto.contentUrl" id="submitTextArea" style="display:none;"></textarea>
     </form>
-    <button type="button" onclick="preProcess()">테스트</button>
     <div id="imgAttrChange" style="display:none;">
 
         <!--    </div>-->
@@ -325,7 +324,7 @@
                 var returnVal;
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
-                var url = "/posts/preProcessing/" + blogNm;
+                var url = "/async/posts/preProcessing/" + blogNm;
                 var paramData = {
                     "blogNm" : blogNm,
                     "imgTempUrl" : imgTempUrl

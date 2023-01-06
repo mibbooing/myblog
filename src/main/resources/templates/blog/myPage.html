@@ -219,7 +219,7 @@
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
                 var returnVal;
-                var url = "/blogs/new/category";
+                var url = "/async/category/new/main";
                 var paramData = {
                     blogNm : $("#blogNm").val()
                 };
@@ -306,18 +306,18 @@
 
 <div layout:fragment="content">
     <wrapper class="blog-config-wrapper justify-content-center">
-        <form role="form" method="post" th:action="@{'/blogs/myPage/' + ${blogMyPageFormDto.blogInfoFormDto.blogNm}}" enctype="multipart/form-data" th:object="${blogMyPageFormDto}" onsubmit="return validCheck()">
+        <form role="form" method="post" th:action="@{'/blogs/myPage/' + ${blogNm}}" enctype="multipart/form-data" th:object="${blogMyPageFormDto}" onsubmit="return validCheck()">
             <div class="blog-prifile-info" th:object="${blogMyPageFormDto.blogInfoFormDto}">
                 <div>
                     <input type="hidden" th:field="*{blogId}">
                 </div>
                 <div class="blog-cover">
-                    <input type="hidden" th:value="*{blogImgId}">
+                    <input type="hidden" th:field="*{blogImgId}">
                     <img th:if="*{imgUrl} != null" class="blog-profile-img-inner" th:src="*{imgUrl}" alt="">
                     <img th:unless="*{imgUrl} != null" class="blog-profile-img-inner" src="/img/basic_profile_img.jpg"
                          alt="">
                     <input th:if="*{imgUrl != null}" class="blog-cover-img blog-cover-input-file" type="file"
-                           th:value="*{imgUrl}" name="blogImgFile">
+                           th:value="${imgUrl}" th:name="blogImgFile">
                     <input th:unless="*{imgUrl != null}" class="blog-cover-img blog-cover-input-file" type="file" name="blogImgFile">
                     <button type="button" class="blog-cover-img-button btn btn-outline-secondary"
                             onclick="$('.blog-cover-img').trigger('click');">
@@ -327,7 +327,7 @@
                 <div class="blog-input-wrapper">
                     <div class="form-group">
                         <label th:for="blogNm">블로그 이름</label>
-                        <input type="text" name="blogNm" th:value="*{blogNm}" id="blogNm" class="form-control" placeholder="블로그 이름을 입력해주세요"
+                        <input type="text" th:value="${blogNm}" name="blogMyPageFormDto.blogNm" id="blogNm" class="form-control" placeholder="블로그 이름을 입력해주세요"
                                disabled/>
                         <p th:text="${valid_blogNm}" class="fieldError"></p>
                     </div>
@@ -336,7 +336,7 @@
                         <select class="form-select" th:field="*{topicId}" th:errorclass="field-error">
                             <option th:each="topicList : *{topicList}"
                                     th:value="${topicList.Id}"
-                                    th:text="${topicList.topicName}"  th:selectd="${topicList.Id} == *{topicId}">
+                                    th:text="${topicList.topicName}"  th:selectd="${topicList.Id} == ${topicId}">
                             </option>
                         </select>
                         <p th:text="${valid_topicId}" class="fieldError"></p>

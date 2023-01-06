@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 public interface MemberImgRepository extends JpaRepository<MemberImg, Long> {
 
     @Query("select new com.example.myblog.dto.MemberInfoFormDto(img.id, m.email, m.name, m.introduction, img.imgName, img.oriImgName, img.imgUrl, img.repimgYn) " +
-        "from MemberImg img join img.member m " +
-        "where img.member.id = :memberId " +
+            "from MemberImg img right join img.member m " +
+            "on img.member.id = m.id " +
             "and img.repimgYn = :repimgYn " +
-            "and img.member.id = m.id"
+            "where img.member.id = :memberId"
     )
     MemberInfoFormDto findByMemberIdAndRepimgYn(Long memberId, String repimgYn);
 }
