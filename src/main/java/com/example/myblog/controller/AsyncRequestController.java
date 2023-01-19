@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,6 +52,7 @@ public class AsyncRequestController {
 
     @PostMapping(value = "/category/new/main")
     @ResponseBody
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#paramMap.get('blogNm'), principal.username)")
     public ResponseEntity createCategory(@RequestBody Map<String, Object> paramMap) {
         if (paramMap.get("blogNm") == null) {
             return new ResponseEntity<String>("카테고리 생성에 실패하였습니다.", HttpStatus.BAD_REQUEST);
@@ -68,6 +70,7 @@ public class AsyncRequestController {
 
     @PostMapping(value = "/posts/upload/{blogNm}")
     @ResponseBody
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
     public ResponseEntity<String> imageUpload(@PathVariable("blogNm") String blogNm, MultipartFile upload, HttpServletResponse res, HttpServletRequest req) {
         if (upload.isEmpty()) {
             return new ResponseEntity<String>("파일이 없습니다.", HttpStatus.BAD_REQUEST);
@@ -93,6 +96,7 @@ public class AsyncRequestController {
 
     @PostMapping(value = "/posts/preProcessing/{blogNm}")
     @ResponseBody
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
     public ResponseEntity<String> imageReplacePath(@PathVariable("blogNm") String blogNm, @RequestBody Map<String, Object> paramMap) {
         if (blogNm.isEmpty()) {
             return new ResponseEntity<String>("blogName null!", HttpStatus.BAD_REQUEST);
@@ -100,7 +104,7 @@ public class AsyncRequestController {
         JsonObject obj = new JsonObject();
         try {
             Post emptyPost = postService.createPost(blogNm);
-            String reqTargetPath = "C:/myblog/post/" + (String) paramMap.get("imgTempUrl") + "/";
+            String reqTargetPath = "C:/myblog/post" + (String) paramMap.get("imgTempUrl");
             String reqDestPath = "C:/myblog/post/" + blogNm + "/" + emptyPost.getId() + "/";
             fileService.replaceImgPath(reqTargetPath, reqDestPath);
             String imgUrl = "/images/post/" + blogNm + "/" + emptyPost.getId() + "/";

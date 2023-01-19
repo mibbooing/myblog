@@ -1,4 +1,4 @@
-insert into topic(topic_name) values(1, '라이프스타일');
+insert into topic(topic_name) values(1, '생활');
 insert into topic(topic_name) values('여행');
 insert into topic(topic_name) values('IT');
 insert into topic(topic_name) values('시사');

@@ -14,6 +14,8 @@
         }
 
 
+
+
     </style>
 </th:block>
 <th:block layout:fragment="script">
@@ -26,7 +28,61 @@
                 }
             [/]
         });
+
+
     </script>
 </th:block>
+
+<div layout:fragment="content" class="blog-section">
+
+    <div class="item_list" th:object="${blogMainFormDto}">
+        <div th:each="postPreview : *{postList}" class="item">
+            <div th:if="${postPreview.previewContents} == null">
+                <div class="info_post">
+                    <div class="author">
+                        <div class="info_author">
+                            <span class="time" th:text="${postPreview.regTime}"></span>
+                        </div>
+                    </div>
+                    <div class="desc_post">
+                        <h1><a th:href="'/posts/details/' + ${postPreview.postId}" class="desc_title"
+                               th:text="${postPreview.title}"></a></h1>
+                        <a th:href="'/posts/details/' + ${postPreview.postId}" class="desc_text">이웃에게만 공개된 게시물 입니다.</a>
+                    </div>
+                </div>
+            </div>
+            <div th:unless="${postPreview.previewContents} == null">
+                <div class="info_post">
+                    <div class="author">
+                        <div class="info_author">
+                            <span class="time" th:text="${postPreview.regTime}"></span>
+                        </div>
+                    </div>
+                    <div class="desc_post">
+                        <h1><a th:href="'/posts/details/' + ${postPreview.postId}" class="desc_title"
+                               th:text="${postPreview.title}"></a></h1>
+                        <a th:href="'/posts/details/' + ${postPreview.postId}" class="desc_text"
+                           th:text="${postPreview.previewContents}"></a>
+                    </div>
+                    <div class="comments">
+                                        <span class="like">공감
+                                            <em>횟수</em>
+                                        </span>
+                        <span class="comments">댓글
+                                            <em>갯수</em>
+                                        </span>
+                    </div>
+                </div>
+                <div th:if="${postPreview.postImgId} != null" class="thumbnail_post">
+                    <div class="thumbnail_area">
+                        <a th:href="'/posts/details/' + ${postPreview.postId}" class="thumbnail_inner">
+                            <img th:src="${postPreview.postImgUrl}" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </html>
 

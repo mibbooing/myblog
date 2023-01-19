@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout_blog}">
+      layout:decorate="~{layouts/layout_post}">
 <head>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
@@ -13,8 +13,6 @@
         .fieldError {
             color: #bd2130;
         }
-
-
     </style>
 </th:block>
 
@@ -99,13 +97,13 @@
 <div layout:fragment="content" class="blog-section">
 
     <form role="form" method="post" th:action="@{'/posts/new/'+${postFormDto.blogNm}}" class="blog-post-form"
-          th:object="${postFormDto}" onsubmit="return preProcess()">
+          th:object="${postFormDto}" enctype="multipart/form-data" onsubmit="return preProcess()">
         <div class="post-category">
             <div class="form-floating">
                 <select class="hierarchy post-input-category form-select" name="postDto.categoryId"
                         id="mainCategory" data-target="second">
                     <option th:each="categoryList : ${postFormDto.categoryDtoList}"
-                            th:if="${categoryList.depth == T(com.example.myblog.constant.CategoryType).MAIN}"
+                            th:if="${categoryList.depth != T(com.example.myblog.constant.CategoryType).SUB}"
                             th:value="${categoryList.categoryId}"
                             th:text="${categoryList.categoryNm}">
                     </option>
@@ -150,6 +148,7 @@
         <button type="button" class="btn btn-primary" id="tempSaveBtn">임시저장</button>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <textarea th:name="postDto.contentUrl" id="submitTextArea" style="display:none;"></textarea>
+        <input type="hidden" th:name="postDto.previewContents" id="previewContents">
     </form>
     <div id="imgAttrChange" style="display:none;">
 
@@ -218,9 +217,8 @@
                 }
             }
             function preProcess(){
-                var aaa = window.editor.getData();
-                console.log('시발');
-                console.log(aaa.length);
+                var contentVal = $('.ck-editor__editable').text();
+                $('#previewContents').val(contentVal);
                 if(validCheck()){
                     return false;
                 }
@@ -238,7 +236,6 @@
             }
 
             function validCheck(){
-                console.log('뭐가');
                 if(($('#post-title').val().length <= 1) || ($('#post-title').val().length > 51)){
                     alert("제목을 최소 2자 이상, 최대 50자 이하로 입력해주세요.");
                     $('#post-title').focus();
@@ -249,7 +246,6 @@
                     alert("본문을 최소 2자 이상(공백제외) 입력해주세요.");
                     return true;
                 }
-                console.log('안되는거야');
                 if($('#postDto.categoryId option:selected').val() == null){
                     if($('#mainCategory').val() == blogNm){
                         alert("게시글이 기본 카테고리로 저장됩니다.");

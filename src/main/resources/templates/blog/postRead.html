@@ -1,0 +1,59 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_blog}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+
+<th:block layout:fragment="css">
+    <style>
+        .fieldError {
+            color: #bd2130;
+        }
+    </style>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            [# th:if="${errorMessage}"]
+                var errorMessage = [[${errorMessage}]];
+                if(errorMessage != null){
+                    alert(errorMessage);
+                }
+            [/]
+        });
+    </script>
+</th:block>
+
+    <div layout:fragment="content" class="blog-section">
+        <div class="blog-post-wrapper" >
+            <div class="post-area">
+                <div class="post-title">
+                    <div th:text="${postFormDto.postDto.categoryNm}"></div>
+                    <h1 id="title" th:text="${postFormDto.postDto.title}"></h1>
+                    <span class="meta">
+                        <span class="author" th:text="${postFormDto.email}"></span>
+                        <span class="date" th:text="${postFormDto.postDto.regTime}"></span>
+                    </span>
+                </div>
+                <div class="post-contents">
+                    <div id="contents" th:utext="${postFormDto.postDto.contentUrl}"></div>
+                </div>
+                </div>
+            <div class="comments-area">
+                <div class="comments-list">
+                    <div id="comments-id"></div>
+                    <form action="/comments/new">
+                        <input type="text">
+                        <button type="submit">댓글달기</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</html>

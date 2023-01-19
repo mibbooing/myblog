@@ -53,7 +53,7 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "member/memberForm";
         }
-        return "redirect:/home";
+        return "redirect:/";
     }
 
     @GetMapping(value = "/login")
@@ -77,7 +77,7 @@ public class MemberController {
             }
         }catch (EntityNotFoundException e){
             model.addAttribute("errorMessage", "잘못된 접근입니다.");
-            return "redirect:/home";
+            return "redirect:/";
         }
         return "member/myPage";
     }
@@ -91,7 +91,7 @@ public class MemberController {
             model.addAttribute("errorMessage", "사용자 정보 수정중 에러가 발생하였습니다.");
             return "member/myPage";
         }
-        return "/home";
+        return "home";
     }
 
 }

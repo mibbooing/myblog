@@ -1,6 +1,8 @@
 package com.example.myblog.dto;
 
 import com.example.myblog.constant.PostStatus;
+import com.example.myblog.entity.Blog;
+import com.example.myblog.entity.Member;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +18,11 @@ public class PostFormDto {
 
     private String blogNm;
 
+    private String email;
+
     private PostDto postDto;
+
+    private Blog blog;
 
     private List<PostImgDto> postImgDtoList = new ArrayList<>();
 
@@ -24,4 +30,16 @@ public class PostFormDto {
 
     private List<PostStatus> postStatusList = new ArrayList<>();
 
+    private PostImgDto postImgDto;
+
+    public PostFormDto() {
+    }
+
+    public void setPostReadData(String email, PostDto postDto, Blog blog, List<CategoryDto> categoryDtoList, PostImgDto postImgDto){
+        this.email = email;
+        this.postDto = postDto;
+        this.blog = blog;
+        this.categoryDtoList = categoryDtoList;
+        this.postImgDto = postImgDto;
+    }
 }

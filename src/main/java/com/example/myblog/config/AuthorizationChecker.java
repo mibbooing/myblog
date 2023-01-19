@@ -1,21 +1,17 @@
 package com.example.myblog.config;
 
 
-import com.example.myblog.constant.AccessAuthType;
 import com.example.myblog.constant.PostStatus;
 import com.example.myblog.constant.Role;
 import com.example.myblog.entity.*;
 import com.example.myblog.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.AntPathMatcher;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -32,18 +28,47 @@ public class AuthorizationChecker {
     private final BlogAuthRepository blogAuthRepository;
     private final AccessAuthRepository accessAuthRepository;
 
-    public boolean checkBlogAuth(String blogNm, String username) {
+    public boolean checkBlogAuth(String blogNm, String username) throws NullPointerException {
+        if (username.isEmpty()) {
+            return false;
+        }
         try {
             BlogAuth blogAuth = blogAuthRepository.findByBlogNmAndMemberEmail(blogNm, username);
             if (blogAuth.getRole().equals(Role.ADMIN)) {
                 return true;
             }
         } catch (Exception e) {
-            if(e instanceof NullPointerException){
-                System.out.println("검색실패");
-                throw new NullPointerException("권한검색실패");
+            if (e instanceof NullPointerException) {
+                throw new NullPointerException("ERR_BLOG_PERMISSION");
             }
         }
         return false;
+    }
+
+    public boolean checkPostAuth(Long postId, String username) throws NullPointerException, EntityNotFoundException, AccessDeniedException{
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("ERR_POST_NUM"));
+        if (post.getPostStatus().equals(PostStatus.PUBLIC)) {
+            return true;
+        } else {
+            if (username == null) {
+                throw new AccessDeniedException("ERR_POST_ANONYMOUS");
+            }
+            BlogAuth blogAuth = blogAuthRepository.findByBlogNmAndMemberEmail(post.getBlog().getBlogNm(), username);
+            if (post.getPostStatus().equals(PostStatus.PERMITTED)) {
+                if (blogAuth.getRole().equals(Role.USER) || blogAuth.getRole().equals(Role.ADMIN)) {
+                    return true;
+                } else {
+                    throw new AccessDeniedException("ERR_POST_PERMISSION_USER");
+                }
+            } else if (post.getPostStatus().equals(PostStatus.DELETE)) {
+                throw new AccessDeniedException("ERR_POST_DELETED");
+            } else {
+                if (blogAuth.getRole().equals(Role.ADMIN)) {
+                    return true;
+                } else {
+                    throw new AccessDeniedException("ERR_POST_PERMISSION_ADMIN");
+                }
+            }
+        }
     }
 }

@@ -36,7 +36,7 @@ public class InitialDataSet implements CommandLineRunner {
 
     private void setTopic() {
         final List<Topic> topicList = Arrays.asList(
-                new Topic("라이프스타일"),
+                new Topic("생활"),
                 new Topic("여행"),
                 new Topic("IT"),
                 new Topic("시사"),

@@ -5,15 +5,13 @@ import com.example.myblog.dto.PostDto;
 import com.example.myblog.dto.PostFormDto;
 import com.example.myblog.dto.PostImgDto;
 import com.example.myblog.entity.Post;
-import com.example.myblog.service.BlogService;
-import com.example.myblog.service.CategoryService;
-import com.example.myblog.service.FileService;
-import com.example.myblog.service.PostService;
+import com.example.myblog.service.*;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -35,21 +34,25 @@ public class PostController {
 
     private final PostService postService;
     private final BlogService blogService;
-    private final FileService fileService;
+    private final CommentService commentService;
 
     @GetMapping(value = "/new/{blogNm}")
-    public String postForm(@PathVariable("blogNm")String blogNm, Model model){
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
+    public String postForm(@PathVariable("blogNm")String blogNm, HttpServletRequest request, Model model){
         try{
             model.addAttribute("postFormDto", postService.getPostForm(blogNm));
         }catch (Exception e){
-
+            model.addAttribute("errorMessage", e.getMessage());
+            if(request.getHeader("Referer") != null){
+                model.addAttribute("url", request.getHeader("Referer"));
+            }
+            return "/error/error";
         }
-
-
         return "blog/postForm";
     }
 
     @PostMapping(value = "/new/{blogNm}")
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
     public String savePost(@PathVariable("blogNm")String blogNm, @Valid PostFormDto postFormDto, BindingResult bindingResult, Model model){
         if(bindingResult.hasErrors()){
             model.addAttribute("blogFormDto", postService.getPostForm(blogNm));
@@ -61,63 +64,28 @@ public class PostController {
         }
         try{
             postService.savePost(postFormDto);
-         } catch (Exception e){
+        } catch (Exception e){
             model.addAttribute("blogFormDto", postService.getPostForm(blogNm));
             model.addAttribute("errorMessage", e.getMessage());
             return "blog/postForm";
         }
-        return "redirect:/home";
+        return "redirect:/";
     }
-
-//    @PostMapping(value = "/upload/{blogNm}")
-//    @ResponseBody
-//    public ResponseEntity<String> imageUpload(@PathVariable("blogNm")String blogNm, MultipartFile upload, HttpServletResponse res, HttpServletRequest req){
-//        if(upload.isEmpty()){
-//            return new ResponseEntity<String>("파일이 없습니다.", HttpStatus.BAD_REQUEST);
-//        }
-//        String fileName;
-//        Date now = new Date();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//        try{
-//            File folder = fileService.makePath("C:/myblog/post/temp/"+sdf.format(now)+"/"+blogNm+"/");
-//            fileName = fileService.uploadFile(folder.getPath(), upload.getOriginalFilename(), upload.getBytes());
-//        }catch (Exception e){
-//            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//        JsonObject obj = new JsonObject();
-//        obj.addProperty("url","/images/post/temp/"+sdf.format(now)+"/"+blogNm+"/"+fileName);
-//        obj.addProperty("oriImgName", upload.getOriginalFilename());
-//        obj.addProperty("tempUrl", "/temp/"+sdf.format(now)+"/"+blogNm+"/");
-//        obj.addProperty("imgName", fileName);
-//        HttpHeaders header = new HttpHeaders();
-//        header.add("Content-Type", "application/json; charset=UTF-8");
-//        return new ResponseEntity<>(obj.toString(),header,HttpStatus.OK);
-//    }
-//
-//    @PostMapping(value = "/preProcessing/{blogNm}")
-//    @ResponseBody
-//    public ResponseEntity<String> imageReplacePath(@PathVariable("blogNm")String blogNm, @RequestBody Map<String, Object> paramMap){
-//        if(blogNm.isEmpty()){
-//            return new ResponseEntity<String>("blogName null!", HttpStatus.BAD_REQUEST);
-//        }
-//        JsonObject obj = new JsonObject();
-//        try{
-//            Post emptyPost = postService.createPost(blogNm);
-//            String reqTargetPath = "C:/myblog/post/"+(String)paramMap.get("imgTempUrl")+"/";
-//            String reqDestPath = "C:/myblog/post/"+blogNm+"/"+emptyPost.getId()+"/";
-//            fileService.replaceImgPath(reqTargetPath, reqDestPath);
-//            String imgUrl = "/images/post/"+blogNm+"/"+emptyPost.getId()+"/";
-//            System.out.println("PostId : "+imgUrl);
-//            obj.addProperty("postId", emptyPost.getId());
-//            obj.addProperty("imgUrl", imgUrl);
-//        }catch (Exception e){
-//            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
-//    }
     @GetMapping(value = "/details/{postNum}")
-    public String getPostDetail(@PathVariable("postNum")String postNum, Model model){
-        return "redirect:/home";
+    @PreAuthorize("@authorizationChecker.checkPostAuth(#postNum, isAnonymous() ? null : principal.username)")
+    public String getPostDetail(@PathVariable("postNum")Long postNum, @RequestParam(value = "page", defaultValue = "0") int page,Model model, Principal principal){
+        PostFormDto postFormDto = postService.getPost(postNum);
+        model.addAttribute("postFormDto", postFormDto);
+        model.addAttribute("memberInfoFormDto", blogService.getBlogAuthMemberInfo(postFormDto.getBlog()));
+        model.addAttribute("categoryDtoList", postFormDto.getCategoryDtoList());
+        model.addAttribute("commentDtoList", commentService.getCommentDtoList(page, postNum, principal.getName()));
+        if(principal.getName() != null){
+            model.addAttribute("commentFormDto", commentService.getCommentFormDto());
+        }
+        if(postFormDto.getPostImgDto() == null){
+            model.addAttribute("blogImgDto", blogService.getBlogRepImg(postFormDto.getBlog().getId()));
+        }
+        return "blog/postRead";
     }
 
 }

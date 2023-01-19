@@ -1,0 +1,11 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="slider">
+    <div class="blog-cover">
+        <img th:if="${blogImgDto} != null" class="blog-profile-img-inner" th:src="${blogImgDto.imgUrl}" alt="">
+        <img th:if="${postFormDto} != null and ${postFormDto.postImgDto} != null" class="blog-profile-img-inner" th:src="${postFormDto.postImgDto.imgUrl}" alt="">
+    </div>
+</div>
+
+</html>

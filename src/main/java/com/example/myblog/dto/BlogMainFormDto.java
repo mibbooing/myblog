@@ -11,7 +11,9 @@ import java.util.List;
 public class BlogMainFormDto {
     private List<PostPreviewDto> postList = new ArrayList<>();
 
-    private List<CategoryDto> categoryList = new ArrayList<>();
+    private List<CategoryDto> categoryDtoList = new ArrayList<>();
 
     private MemberInfoFormDto memberInfoFormDto;
+
+    private BlogImgDto blogImgDto;
 }

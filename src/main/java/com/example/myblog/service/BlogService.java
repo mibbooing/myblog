@@ -15,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 @Service
@@ -28,6 +29,8 @@ public class BlogService {
     private final BlogImgRepository blogImgRepository;
 
     private final CategoryRepository categoryRepository;
+
+    private final PostRepository postRepository;
     private final BlogAuthRepository blogAuthRepository;
     private final ImgService imgService;
 
@@ -54,6 +57,26 @@ public class BlogService {
         }
     }
 
+    public BlogMainFormDto getBlogMain(String blogNm){
+        Blog blog = blogRepository.findByBlogNm(blogNm);
+        if(blog == null){
+            throw new EntityNotFoundException("ERR_BLOG_NAME");
+        }
+        BlogMainFormDto blogMainFormDto = new BlogMainFormDto();
+        blogMainFormDto.setPostList(postRepository.findByBlogNm(blogNm));
+        blogMainFormDto.setMemberInfoFormDto(getBlogAuthMemberInfo(blog));
+        blogMainFormDto.setBlogImgDto(getBlogRepImg(blog.getId()));
+        blogMainFormDto.setCategoryDtoList(categoryRepository.findByBlogId(blog.getId()));
+        return blogMainFormDto;
+    }
+
+    public BlogImgDto getBlogRepImg(Long blogId){
+        return blogImgRepository.findByBlogIdAndRepimgYn(blogId, "Y");
+    }
+
+    public MemberInfoFormDto getBlogAuthMemberInfo(Blog blog){
+        return memberRepository.findByIdForBlogMain(blog.getMember().getId());
+    }
 
     public BlogInfoFormDto getMyBlogForm(String blogNm){
         BlogInfoFormDto blogInfoFormDto = blogRepository.findByBlogNmAndRepImgYn(blogNm, "Y");

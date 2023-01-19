@@ -27,11 +27,13 @@
 <body>
     <div th:replace="fragments/header::header"></div>
 
+    <div th:replace="fragments/slider::slider"></div>
+
     <main class="blog-main">
         <section layout:fragment="content">
 
         </section>
-<!--        <div th:replace="fragments/sidebar::sidebar"></div>-->
+        <div th:replace="fragments/sidebar::sidebar"></div>
     </main>
 
     <div th:replace="fragments/footer::footer"></div>

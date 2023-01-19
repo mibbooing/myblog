@@ -28,9 +28,9 @@ public class SecurityConfig {
                      .and()
                         .logout()
                         .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
-                        .logoutSuccessUrl("/home");
+                        .logoutSuccessUrl("/");
         http.authorizeRequests()
-                .mvcMatchers("/", "/home","/members/login","/members/login/error","/members/new","/errors/*","/blogs/main/**","/blogs/*/category/**").permitAll()
+                .mvcMatchers("/", "/home","/members/login","/members/login/error","/members/new","/errors/*","/blogs/main/**","/blogs/*/category/**","/posts/details/*","/images/**").permitAll()
                 .anyRequest().authenticated();
         http.exceptionHandling()
                 .accessDeniedHandler(new CustomAccessDeniedHandler())

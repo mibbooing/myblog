@@ -2,21 +2,19 @@ package com.example.myblog.service;
 
 
 import com.example.myblog.constant.CategoryType;
-import com.example.myblog.dto.ImgSaveTypeDto;
-import com.example.myblog.dto.TypeSet;
-import com.example.myblog.dto.PostFormDto;
+import com.example.myblog.dto.*;
 import com.example.myblog.entity.Blog;
 import com.example.myblog.entity.Category;
+import com.example.myblog.entity.Member;
 import com.example.myblog.entity.Post;
-import com.example.myblog.repository.BlogRepository;
-import com.example.myblog.repository.CategoryRepository;
-import com.example.myblog.repository.PostRepository;
+import com.example.myblog.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +27,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryService categoryService;
 
+    private final MemberRepository memberRepository;
     private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
+    private final PostImgRepository postImgRepository;
     private final ImgService imgService;
 
     public PostFormDto getPostForm(String blogNm){
@@ -68,8 +68,12 @@ public class PostService {
         imgService.saveImg(imgSaveTypeDto, null, map);
     }
 
-    public void getPost(){
-
+    public PostFormDto getPost(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("ERR_POST_NUM"));
+        List<CategoryDto> categoryDtoList = categoryRepository.findByBlogId(post.getBlog().getId());
+        PostFormDto postFormDto = new PostFormDto();
+        postFormDto.setPostReadData(post.getBlog().getMember().getEmail(), new PostDto(post), post.getBlog(), categoryDtoList, postImgRepository.findByPostId(postId));
+        return postFormDto;
     }
 
     public List<Post> getPostList(){

@@ -26,6 +26,9 @@ public class Post extends BaseEntity {
     @Lob
     private String contentUrl;
 
+    @Lob
+    private String previewContents;
+
     @Enumerated(EnumType.STRING)
     private PostStatus postStatus;
 
@@ -50,6 +53,7 @@ public class Post extends BaseEntity {
         this.id = postDto.getId();
         this.title = postDto.getTitle();
         this.contentUrl = postDto.getContentUrl();
+        this.previewContents = postDto.getPreviewContents();
         this.postStatus = postDto.getPostStatus();
         this.blog = blog;
         this.category = category;

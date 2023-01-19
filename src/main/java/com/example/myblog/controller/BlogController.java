@@ -55,11 +55,16 @@ public class BlogController {
             model.addAttribute("errorMessage", e.getMessage());
             return "blog/createBlogForm";
         }
-        return "redirect:/home";
+        return "redirect:/";
     }
 
     @GetMapping(value = "/main/{blogNm}")
-    public String getBlogMain(){
+    public String getBlogMain(@PathVariable("blogNm")String blogNm, Model model){
+        BlogMainFormDto blogMainFormDto = blogService.getBlogMain(blogNm);
+        model.addAttribute("blogMainFormDto", blogMainFormDto);
+        model.addAttribute("memberInfoFormDto", blogMainFormDto.getMemberInfoFormDto());
+        model.addAttribute("categoryDtoList", blogMainFormDto.getCategoryDtoList());
+        model.addAttribute("blogImgDto", blogMainFormDto.getBlogImgDto());
         return "blog/blogForm";
     }
 
@@ -73,6 +78,7 @@ public class BlogController {
     }
 
     @PostMapping(value = "/myPage/{blogNm}")
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
     public String updateBlogMyPage(@PathVariable("blogNm")String blogNm, @ModelAttribute BlogMyPageFormDto blogMyPageFormDto, @RequestParam("blogImgFile") MultipartFile multipartFile, Model model) {
         System.out.println("블로그ID: " + blogMyPageFormDto.getBlogInfoFormDto().getBlogId());
         List<CategoryDto> list = blogMyPageFormDto.getCategoryDtoList();
@@ -87,10 +93,10 @@ public class BlogController {
             model.addAttribute("errorMessage", "블로그 정보 수정중 에러가 발생하였습니다.");
             return "blog/myPage";
         }
-        return "redirect:/home";
+        return "redirect:/";
     }
 
-    @GetMapping(value = "/{blogNm}/category/{category}")
+    @GetMapping(value = "/category/{category}")
     public String getPostsList(){
         return "blog/list";
     }
