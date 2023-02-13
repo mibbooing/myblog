@@ -4,9 +4,20 @@
 <header th:fragment="header">
     <nav class="navbar">
         <div class="navbar-logo">
-            <button type="button" class="btn_home btn_none-style" onclick="location.href='/'">
-                <i class="bi bi-house"></i>
+            <button th:if="${blogMainFormDto}" type="button" class="btn_home btn_none-style"
+                    th:onclick="'location.href=\''+@{'/blogs/main/'+${blogMainFormDto.blogNm}}+'\''">
+<!--                <i class="bi bi-house"></i>-->
+                <h2 class="blog-name-link">[[${blogMainFormDto.blogNm}]]</h2>
             </button>
+            <button th:if="${postFormDto}" type="button" class="btn_home btn_none-style"
+                    th:onclick="'location.href=\''+@{'/blogs/main/'+${postFormDto.blogNm}}+'\''">
+<!--                <i class="bi bi-house"></i>-->
+                <h2 class="blog-name-link">[[${postFormDto.blogNm}]]</h2>
+            </button>
+
+            <!--            <button type="button" class="btn_home btn_none-style" th:onclick="location.href='/'">-->
+            <!--                <i class="bi bi-house"></i>-->
+            <!--            </button>-->
             <button type="button" class="btn_menu btn_none-style">
                 <i class="bi bi-list"></i>
             </button>

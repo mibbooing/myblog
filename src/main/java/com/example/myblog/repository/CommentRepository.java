@@ -17,6 +17,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "end," +
             "comm.member.id," +
             "comm.member.email, " +
+            "comm.member.name, " +
             "p.id, " +
             "comm.commentStatus, " +
             "comm.commentStatusRequester) " +
@@ -24,4 +25,22 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "on comm.post.id = p.id " +
             "where p.id = :postId")
     Page<CommentDto> findByPostIdAndMemberId(Pageable pageable, Long postId, Long memberId);
+
+    @Query("select new com.example.myblog.dto.CommentDto(" +
+                "comm.id, " +
+                "case" +
+                "   when comm.commentStatus = com.example.myblog.constant.PostStatus.PUBLIC then comm.content " +
+                "   else null " +
+                "end," +
+                "comm.member.id," +
+                "comm.member.email," +
+                "comm.member.name, " +
+                "p.id, " +
+                "comm.commentStatus, " +
+                "comm.commentStatusRequester) " +
+                "from Comment comm left join comm.post p " +
+                "on comm.post.id = p.id " +
+                "where p.id = :postId")
+    Page<CommentDto> findByPostId(Pageable pageable, Long postId);
+
 }

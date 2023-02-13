@@ -3,6 +3,7 @@ package com.example.myblog.entity;
 import com.example.myblog.constant.PostStatus;
 import com.example.myblog.constant.Role;
 import com.example.myblog.dto.CommentDto;
+import com.example.myblog.dto.CommentFormDto;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,7 +13,8 @@ import javax.persistence.*;
 @Table(name = "comment")
 @Getter
 @ToString
-public class Comment extends BaseEntity{
+public class Comment extends BaseEntity {
+
     @Id
     @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,10 +36,21 @@ public class Comment extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role commentStatusRequester;
 
-    public void createComment(CommentDto commentDto, Member member, Post post){
-        this.content = commentDto.getCommentContent();
+    public void createComment(CommentFormDto commentFormDto, Member member, Post post) {
+        this.content = commentFormDto.getContent();
         this.member = member;
         this.post = post;
+        this.commentStatus = commentFormDto.getCommentStatus();
+        this.commentStatusRequester = commentFormDto.getCommentStatusRequester();
+    }
+
+    public void updateComment(CommentDto commentDto) {
+        this.content = commentDto.getCommentContent();
+        this.commentStatus = commentDto.getCommentStatus();
+        this.commentStatusRequester = commentDto.getCommentStatusRequester();
+    }
+
+    public void deleteComment(CommentDto commentDto) {
         this.commentStatus = commentDto.getCommentStatus();
         this.commentStatusRequester = commentDto.getCommentStatusRequester();
     }

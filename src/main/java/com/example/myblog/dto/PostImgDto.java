@@ -20,6 +20,9 @@ public class PostImgDto {
 
     private String repimgYn;
 
+    public PostImgDto() {
+    }
+
     public PostImgDto(Long id, Long postId, String imgName, String oriImgName, String imgUrl, String repimgYn) {
         this.id = id;
         this.postId = postId;

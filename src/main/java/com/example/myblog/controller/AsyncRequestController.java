@@ -116,4 +116,27 @@ public class AsyncRequestController {
         }
         return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
     }
+
+    @PatchMapping(value = "/posts/preProcessing/{blogNm}")
+    @ResponseBody
+    @PreAuthorize("@authorizationChecker.checkBlogAuth(#blogNm, principal.username)")
+    public ResponseEntity<String> updateImageReplacePath(@PathVariable("blogNm") String blogNm, @RequestBody Map<String, Object> paramMap) {
+        if (blogNm.isEmpty()) {
+            return new ResponseEntity<String>("blogName null!", HttpStatus.BAD_REQUEST);
+        }
+        JsonObject obj = new JsonObject();
+        try {
+//            Post emptyPost = postService.createPost(blogNm);
+            Long postId = (Long) paramMap.get("imgTempUrl");
+            String reqTargetPath = "C:/myblog/post" + (String) paramMap.get("imgTempUrl");
+            String reqDestPath = "C:/myblog/post/" + blogNm + "/" + postId + "/";
+            fileService.replaceImgPath(reqTargetPath, reqDestPath);
+            String imgUrl = "/images/post/" + blogNm + "/" + postId + "/";
+            System.out.println("PostId : " + imgUrl);
+            obj.addProperty("imgUrl", imgUrl);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
+    }
 }

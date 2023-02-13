@@ -25,16 +25,19 @@
     <th:block layout:fragment="css"></th:block>
 </head>
 <body>
-    <div th:replace="fragments/header_post::header"></div>
+    <div id="wrap">
+        <div th:replace="fragments/header_post::header"></div>
 
-    <main class="blog-main">
-        <section layout:fragment="content">
+        <main class="blog-main">
+            <section layout:fragment="content">
 
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <div th:replace="fragments/footer::footer"></div>
+        <div th:replace="fragments/footer::footer"></div>
+    </div>
     <div class="overlay"></div>
+
     <th:block layout:fragment="post-script"></th:block>
 </body>
 </html>

@@ -25,6 +25,7 @@
     <th:block layout:fragment="css"></th:block>
 </head>
 <body>
+<div id="wrap">
     <div th:replace="fragments/header::header"></div>
 
     <div th:replace="fragments/slider::slider"></div>
@@ -35,9 +36,10 @@
         </section>
         <div th:replace="fragments/sidebar::sidebar"></div>
     </main>
-
     <div th:replace="fragments/footer::footer"></div>
     <div class="overlay"></div>
+</div>
+
     <th:block layout:fragment="post-script"></th:block>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.example.myblog.config;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,14 +15,18 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
+
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.formLogin()
                         .loginPage("/members/login")
                         .defaultSuccessUrl("/")
+                        .successHandler(customAuthenticationSuccessHandler)
                         .usernameParameter("email")
                         .loginProcessingUrl("/members/login")
                         .failureUrl("/members/login/error")
@@ -30,7 +35,7 @@ public class SecurityConfig {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
                         .logoutSuccessUrl("/");
         http.authorizeRequests()
-                .mvcMatchers("/", "/home","/members/login","/members/login/error","/members/new","/errors/*","/blogs/main/**","/blogs/*/category/**","/posts/details/*","/images/**").permitAll()
+                .mvcMatchers("/", "/home","/members/login","/members/login/error","/members/new","/errors/*","/blogs/main/**","/blogs/category/**","/posts/details/*","/images/**").permitAll()
                 .anyRequest().authenticated();
         http.exceptionHandling()
                 .accessDeniedHandler(new CustomAccessDeniedHandler())

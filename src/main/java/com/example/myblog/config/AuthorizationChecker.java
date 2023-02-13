@@ -26,6 +26,8 @@ public class AuthorizationChecker {
     private final BlogRepository blogRepository;
     private final PostRepository postRepository;
     private final BlogAuthRepository blogAuthRepository;
+
+    private final CommentRepository commentRepository;
     private final AccessAuthRepository accessAuthRepository;
 
     public boolean checkBlogAuth(String blogNm, String username) throws NullPointerException {
@@ -45,7 +47,7 @@ public class AuthorizationChecker {
         return false;
     }
 
-    public boolean checkPostAuth(Long postId, String username) throws NullPointerException, EntityNotFoundException, AccessDeniedException{
+    public boolean checkPostAuth(Long postId, String username) throws NullPointerException, EntityNotFoundException, AccessDeniedException {
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("ERR_POST_NUM"));
         if (post.getPostStatus().equals(PostStatus.PUBLIC)) {
             return true;
@@ -70,5 +72,33 @@ public class AuthorizationChecker {
                 }
             }
         }
+    }
+    public boolean checkPostAdmin(Long postId, String username){
+        if(username == null){
+            throw new AccessDeniedException("ERR_POST_ANONYMOUS");
+        }else{
+            Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("ERR_POST_NUM"));
+            BlogAuth blogAuth = blogAuthRepository.findByBlogNmAndMemberEmail(post.getBlog().getBlogNm(), username);
+            if(blogAuth == null){
+                throw new AccessDeniedException("ERR_POST_PERMISSION_ADMIN");
+            }else {
+                if (blogAuth.getRole().equals(Role.ADMIN)) {
+                    return true;
+                } else {
+                    throw new AccessDeniedException("ERR_POST_PERMISSION_ADMIN");
+                }
+            }
+        }
+    }
+
+    public Boolean checkCommentAuth(Long commentId, String username) throws NullPointerException, EntityNotFoundException, AccessDeniedException {
+        if (username.isEmpty()) {
+            return false;
+        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("ERR_COMMENT_NOT_FOUND"));
+        if (comment.getMember().getEmail().equals(username) || comment.getPost().getBlog().getMember().getEmail().equals(username)) {
+            return true;
+        }
+        return false;
     }
 }

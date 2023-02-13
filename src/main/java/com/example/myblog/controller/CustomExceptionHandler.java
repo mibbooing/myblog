@@ -27,7 +27,10 @@ public class CustomExceptionHandler {
         } else if (e.getMessage().equals("ERR_POST_ANONYMOUS")) {
             model.addAttribute("errorMessage", "로그인이 필요한 게시물입니다.");
             model.addAttribute("url", "/members/login");
-        } else{
+        } else if (e.getMessage().equals("ERR_COMMENT_NOT_FOUND")){
+            model.addAttribute("errorMessage", "요청한 댓글을 찾을 수 없습니다.");
+        }
+        else{
             model.addAttribute("errorMessage", "알수없는 오류가 발생하였습니다.");
         }
         if(model.getAttribute("url") == null) {
@@ -37,7 +40,7 @@ public class CustomExceptionHandler {
                 model.addAttribute("url", request.getHeader("Referer"));
             }
         }
-        return "/error/error";
+        return "error/error";
     }
 
 }

@@ -29,6 +29,9 @@ public class PostImg {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    public PostImg() {
+    }
+
     public PostImg(ImgDto imgDto, Post post) {
         this.imgUrl = imgDto.getImgUrl();
         this.imgName = imgDto.getImgName();
@@ -45,12 +48,12 @@ public class PostImg {
         this.post = post;
     }
 
-    public void updatePostImg(PostImgDto postImgDto, Post post) {
-        this.id = postImgDto.getId();
-        this.imgName = postImgDto.getImgName();
-        this.oriImgName = postImgDto.getOriImgName();
-        this.imgUrl = postImgDto.getImgUrl();
-        this.repimgYn = postImgDto.getRepimgYn();
+    public void updatePostImg(ImgDto imgDto, Post post) {
+        this.id = imgDto.getId();
+        this.imgUrl = imgDto.getImgUrl();
+        this.imgName = imgDto.getImgName();
+        this.oriImgName = imgDto.getOriImgName();
+        this.repimgYn = imgDto.getRepimgYn();
         this.post = post;
     }
 }

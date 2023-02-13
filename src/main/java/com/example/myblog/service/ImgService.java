@@ -9,6 +9,7 @@ import com.example.myblog.repository.PostImgRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,12 +45,17 @@ public class ImgService {
 
 
     public void saveImg(ImgSaveTypeDto imgSaveTypeDto, MultipartFile imgFile, Map<String, Object> map) throws Exception {
-        if(imgFile == null){
-            for(PostImgDto postImgDto : (List<PostImgDto>)map.get("postImgDtoList")) {
-                ImgDto imgDto = new ImgDto(null, postImgDto.getImgName(), postImgDto.getOriImgName(), postImgDto.getImgUrl(), postImgDto.getRepimgYn());
-                saveExec(imgSaveTypeDto.getType(), imgDto, map);
+        if (imgFile == null) {
+            for (PostImgDto postImgDto : (List<PostImgDto>) map.get("postImgDtoList")) {
+                if (postImgDto.getId() == null) {
+                    ImgDto imgDto = new ImgDto(null, postImgDto.getImgName(), postImgDto.getOriImgName(), postImgDto.getImgUrl(), postImgDto.getRepimgYn());
+                    saveExec(imgSaveTypeDto.getType(), imgDto, map);
+                } else {
+                    ImgDto imgDto = new ImgDto(postImgDto.getId(), postImgDto.getImgName(), postImgDto.getOriImgName(), postImgDto.getImgUrl(), postImgDto.getRepimgYn());
+                    updateImg(imgDto, imgSaveTypeDto, null, map);
+                }
             }
-        }else {
+        } else {
             String oriImgName = imgFile.getOriginalFilename();
             String imgName = "";
             String imgUrl = "";
@@ -65,18 +71,22 @@ public class ImgService {
     }
 
     public void updateImg(ImgDto imgDto, ImgSaveTypeDto imgSaveTypeDto, MultipartFile imgFile, Map<String, Object> map) throws Exception {
-        if (!imgFile.isEmpty()) {
-            typeCheck(imgSaveTypeDto.getType());
-            String imgPath = imgLocation + "/" + imgSaveTypeDto.getName();
-            if (!StringUtils.isEmpty(imgDto.getImgName())) {
-                fileService.deleteFile(imgPath + imgDto.getImgName());
-            }
-            String oriImgName = imgFile.getOriginalFilename();
-            String imgName = fileService.uploadFile(imgPath, oriImgName, imgFile.getBytes());
-            String imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgName;
-            imgDto.updateImgDto(imgName, oriImgName, imgUrl, "N");
-
+        if (imgFile == null) {
             updateExec(imgSaveTypeDto.getType(), imgDto, map);
+        } else {
+            if (!imgFile.isEmpty()) {
+                typeCheck(imgSaveTypeDto.getType());
+                String imgPath = imgLocation + "/" + imgSaveTypeDto.getName();
+                if (!StringUtils.isEmpty(imgDto.getImgName())) {
+                    fileService.deleteFile(imgPath + imgDto.getImgName());
+                }
+                String oriImgName = imgFile.getOriginalFilename();
+                String imgName = fileService.uploadFile(imgPath, oriImgName, imgFile.getBytes());
+                String imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgName;
+                imgDto.updateImgDto(imgName, oriImgName, imgUrl, "N");
+
+                updateExec(imgSaveTypeDto.getType(), imgDto, map);
+            }
         }
     }
 
@@ -117,6 +127,10 @@ public class ImgService {
             case "blog":
                 BlogImg blogImg = blogImgRepository.findById(imgDto.getId()).orElseThrow(IllegalStateException::new);
                 blogImg.updateBlogImg(imgDto, (Blog) map.get("blog"));
+                break;
+            case "post":
+                PostImg postImg = postImgRepository.findById(imgDto.getId()).orElseThrow(IllegalStateException::new);
+                postImg.updatePostImg(imgDto, (Post) map.get("post"));
                 break;
         }
     }

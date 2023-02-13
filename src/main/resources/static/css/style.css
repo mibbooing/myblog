@@ -1,8 +1,14 @@
 html{
+    height: 100%;
 }
 body {
+    height: 100%;
     margin: 0;
-    padding: 0;
+}
+#wrap{
+    min-height: 100%;
+    position: relative;
+    padding-bottom: 4rem;
 }
 h1 {
     margin: 0;
@@ -13,27 +19,32 @@ header {
     top: 0;
 }
 .main {
-    width: max;
-    min-height: 300px;
+    height: auto;
+    min-height: 100%;
+    width: 100%;
     display: flex;
     justify-content:center;
-    background-color: #F2FFff;
+/*    background-color: #F2FFff;*/
 }
 .section {
     float: left;
-    background-color: #F2FFff;
+/*    background-color: #F2FFff;*/
     word-break:break-all;
     width: 100%;
     display: flex;
     justify-content:center;
 }
 aside {
-    background-color: #F2FFB5;
+/*    background-color: #F2FFB5;*/
     float: left;
 }
 footer {
+    height : 4rem;
+    background-color: #F3F3F3;
+    position: absolute;
     bottom: 0;
-    background-color: #F7DBDB;
+    left: 0;
+    right: 0;
 }
 a {
     text-decoration: none;
@@ -83,14 +94,17 @@ a:hover {
 }
 .member-content{
     height: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 .member-wrapper{
     /*margin-top: 13rem;*/
     flex-direction: column;
-    position: absolute;
+/*    position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);*/
     display: table-cell;
     vertical-align: middle;
     max-height: 45rem;
@@ -153,7 +167,7 @@ a:hover {
     font-size: 2rem;
 }
 .home-wrapper{
-    background-color: #F2FFf0;
+/*    background-color: #F2FFf0;*/
     width:100%;
     max-width: 1000px;
 }
@@ -191,6 +205,11 @@ a:hover {
     font-size: 1rem;
     padding-right: 1rem;
     background-color: white;
+}
+.blog-section .item_list{
+    width: 100%;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .item_list .item{
@@ -269,6 +288,8 @@ a:hover {
     display: table-cell;
     position: relative;
     vertical-align: top;
+    width: 11.5rem;
+    height: 11.5rem;
 }
 .item_list .thumbnail_post .thumbnail_inner{
     display: block;
@@ -306,6 +327,7 @@ a:hover {
     width: 100%;
     min-height: 12rem;
     max-height: 22rem;
+    margin-bottom: 2rem;
 }
 .blog-cover:before{
     padding-bottom: 100%;
@@ -322,6 +344,12 @@ a:hover {
     max-height: 22rem;
     object-fit:cover;
     opacity: 0.5;
+}
+.blog-post-wrapper{
+    width: 100%;
+}
+.blog-post-wrapper .post-area{
+    min-height: 8rem;
 }
 .blog-config-wrapper .blog-cover .blog-cover-img-button{
     position: absolute;
@@ -435,18 +463,18 @@ img{
     min-height: 300px;
     display: flex;
     justify-content:center;
-    background-color: #F2FFff;
+/*    background-color: #F2FFff;*/
 }
 .blog-section {
     float: left;
-    background-color: #F2FFff;
+    background-color: #FDFDFD;
     word-break:break-all;
     width: 49.75rem;
     display: flex;
     justify-content:center;
 }
 .blog-aside {
-    background-color: #F2FFB5;
+/*    background-color: #F2FFB5;*/
     width: 14rem;
     display: flex;
     float: left;
@@ -586,12 +614,102 @@ img{
     display : inline-block;
 }
 .empty-item-list{
-    height: 100%;
+    /*height: 100%;*/
+    margin-top: 2rem;
+    margin-bottom: 2rem;
     display:flex;
     align-items:center;
     font-size: 1rem;
 }
+.comments-list .comment-item{
+    margin-top: 0.4rem;
+    border-bottom: 0.1rem solid rgb(206, 206, 206);
+}
+.comments-list .name_author{
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.comments-list .modify-list{
+    display:inline;
+}
+.comments-list span{
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+.comment-insert-area{
+    width: 100%;
+    display: flex;
+}
+.comment-insert-area .comment-input{
+    width:100%;
+    flex: auto;
+}
+.comment-insert-area button{
+    width: 3.8rem;
+    min-width: 3.8rem;
+}
+.comments-area .login-link{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    vertical-align: middle;
+}
+.comment-item .modify-list form{
+    display: inline;
+}
 
+.comment-item .modify-list .modify-btn{
+    display: inline;
+    font-size: 0.8rem;
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+}
+.comment-hide{
+    font-weight: bold;
+    background-color: blue;
+}
+.none_display{
+    display: none;
+}
+.comments-area .comments-title{
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #EAEAEA;
+}
+.link-tag-template:link, .link-tag-template:visited {
+    border-radius: 15%;
+     background-color: #0D6EFD;
+     padding: 0.5rem 0.5rem;
+     margin-top: 0.5rem;
+     margin-left: 0.1rem;
+     color: #FFFFFF !important;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+}
+.link-tag-template:hover, .link-tag-template:active {
+     background-color: #5A9AFA;
+}
+.home-link{
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.home-link a:link, .home-link a:visited{
+    text-decoration: none;
+    font-size: 11px;
+    color: #959595;
+    line-height: 13px;
+}
+.blog-name-link{
+    padding-top : 0.5rem;
+    padding-bottom : 0.5rem;
+    font-family: Century-Gothic, sans-serif;
+}
 
 
 @media screen and ( max-width: 1020px ) {
@@ -602,7 +720,7 @@ img{
   .section {
       width: 100%;
       min-width:150px;
-      background-color: #F2FFff;
+/*      background-color: #F2FFff;*/
       padding-left: 20px;
       padding-right: 20px;
   }
@@ -670,7 +788,7 @@ img{
         width: 100%;
         min-width:150px;
         height: 100%;
-        background-color: #F2FFff;
+/*        background-color: #F2FFff;*/
         padding-left: 20px;
         padding-right: 20px;
     }
@@ -682,6 +800,9 @@ img{
     }
     .authorize_menu{
         display: block;
+    }
+    .item_list .info_post{
+        padding-right: 0.5rem;
     }
 }
 
@@ -707,7 +828,7 @@ img{
         padding: 1rem 0 1rem;
     }
     .item_list .info_post{
-        padding-right: 1.5rem;
+        padding-right: 0;
     }
     .item_list .info_post .author{
         display: inline-block;
@@ -752,6 +873,10 @@ img{
     }
     .item_list .comments .like{
         margin-right: 0.9rem;
+    }
+    .item_list .thumbnail_post{
+            width: 7rem;
+            height: 7rem;
     }
     .item_list .thumbnail_post .thumbnail_inner{
         width: 7rem;

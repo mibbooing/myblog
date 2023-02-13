@@ -26,21 +26,41 @@ public class CommentService {
 
     private final PostRepository postRepository;
 
-    public CommentFormDto getCommentFormDto(){
+    public CommentFormDto getCommentFormDto() {
         return new CommentFormDto();
     }
 
-    public Page<CommentDto> getCommentDtoList(int page, Long postId, String email){
+    public Page<CommentDto> getCommentDtoList(int page, Long postId, String email) {
         Member member = memberRepository.findByEmail(email);
-        Pageable pageable = PageRequest.of(page, 50);
-        return commentRepository.findByPostIdAndMemberId(pageable, postId, member.getId());
+        Pageable pageable = PageRequest.of(page, 10);
+        if (member != null) {
+            return commentRepository.findByPostIdAndMemberId(pageable, postId, member.getId());
+        } else {
+            return commentRepository.findByPostId(pageable, postId);
+        }
     }
 
-    public Comment createComment(CommentDto commentDto){
+    public Comment createComment(CommentFormDto commentFormDto, String email) {
         Comment comment = new Comment();
-        Member member = memberRepository.findById(commentDto.getMemberId()).orElseThrow(()->new EntityNotFoundException());
-        Post post = postRepository.findById(commentDto.getPostId()).orElseThrow(()->new EntityNotFoundException());
-        comment.createComment(commentDto, member, post);
+        Member member = memberRepository.findByEmail(email);
+        Post post = postRepository.findById(commentFormDto.getPostId()).orElseThrow(() -> new EntityNotFoundException());
+        comment.createComment(commentFormDto, member, post);
         return commentRepository.save(comment);
+    }
+
+    public void updateComment(CommentDto commentDto, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Comment comment = commentRepository.findById(commentDto.getCommentId()).orElseThrow(() -> new EntityNotFoundException("COMMENT_NOT_FOUND"));
+        if (member.getId().equals(comment.getMember().getId())) {
+            comment.updateComment(commentDto);
+        }
+    }
+
+    public void deleteComment(CommentDto commentDto, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Comment comment = commentRepository.findById(commentDto.getCommentId()).orElseThrow(() -> new EntityNotFoundException("COMMENT_NOT_FOUND"));
+        if (member.getId().equals(comment.getMember().getId()) || member.getId().equals(comment.getPost().getBlog().getMember().getId())) {
+            comment.deleteComment(commentDto);
+        }
     }
 }

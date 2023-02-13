@@ -8,6 +8,8 @@ import com.example.myblog.entity.*;
 import com.example.myblog.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -34,10 +36,10 @@ public class BlogService {
     private final BlogAuthRepository blogAuthRepository;
     private final ImgService imgService;
 
-    public Blog saveBlog(BlogFormDto blogFormDto, String email){
+    public Blog saveBlog(BlogFormDto blogFormDto, String email) {
         Member member = memberRepository.findByEmail(email);
         validateDuplicateBlog(blogFormDto.getBlogNm());
-        if(blogFormDto.getTopicId() == null){
+        if (blogFormDto.getTopicId() == null) {
             throw new IllegalStateException("블로그 주제를 선택해주세요.");
         }
         Blog blog = Blog.createBlog(blogFormDto, member, topicRepository.findById(blogFormDto.getTopicId()).orElseThrow(IllegalAccessError::new));
@@ -46,41 +48,58 @@ public class BlogService {
         return blog;
     }
 
-    public void createBlogAuth(Blog blog, Member member, Role role){
+    public void createBlogAuth(Blog blog, Member member, Role role) {
         blogAuthRepository.save(new BlogAuth(blog, member, role));
     }
 
-    public void validateDuplicateBlog(String BlogNm){
+    public void validateDuplicateBlog(String BlogNm) {
         Blog findBlog = blogRepository.findByBlogNm(BlogNm);
-        if(findBlog != null){
+        if (findBlog != null) {
             throw new IllegalStateException("이미 존재하는 블로그입니다.");
         }
     }
 
-    public BlogMainFormDto getBlogMain(String blogNm){
+    public BlogMainFormDto getBlogMain(String blogNm, int page) {
         Blog blog = blogRepository.findByBlogNm(blogNm);
-        if(blog == null){
+        if (blog == null) {
             throw new EntityNotFoundException("ERR_BLOG_NAME");
         }
+        Pageable pageable = PageRequest.of(page, 10);
+
         BlogMainFormDto blogMainFormDto = new BlogMainFormDto();
-        blogMainFormDto.setPostList(postRepository.findByBlogNm(blogNm));
+        blogMainFormDto.setPostList(postRepository.findByBlogNm(pageable, blogNm));
         blogMainFormDto.setMemberInfoFormDto(getBlogAuthMemberInfo(blog));
         blogMainFormDto.setBlogImgDto(getBlogRepImg(blog.getId()));
         blogMainFormDto.setCategoryDtoList(categoryRepository.findByBlogId(blog.getId()));
+        blogMainFormDto.setBlogNm(blogNm);
         return blogMainFormDto;
     }
 
-    public BlogImgDto getBlogRepImg(Long blogId){
+    public BlogMainFormDto getPostListCategoryNum(Long categoryNum, int page) {
+        Category category = categoryRepository.findById(categoryNum).orElseThrow(() -> new EntityNotFoundException("ERR_CATEGORY_NOT_FOUND"));
+        Blog blog = category.getBlog();
+        Pageable pageable = PageRequest.of(page, 10);
+
+        BlogMainFormDto blogMainFormDto = new BlogMainFormDto();
+        blogMainFormDto.setPostList(postRepository.findByCategoryId(pageable, categoryNum));
+        blogMainFormDto.setMemberInfoFormDto(getBlogAuthMemberInfo(blog));
+        blogMainFormDto.setBlogImgDto(getBlogRepImg(blog.getId()));
+        blogMainFormDto.setCategoryDtoList(categoryRepository.findByBlogId(blog.getId()));
+        blogMainFormDto.setBlogNm(blog.getBlogNm());
+        return blogMainFormDto;
+    }
+
+    public BlogImgDto getBlogRepImg(Long blogId) {
         return blogImgRepository.findByBlogIdAndRepimgYn(blogId, "Y");
     }
 
-    public MemberInfoFormDto getBlogAuthMemberInfo(Blog blog){
+    public MemberInfoFormDto getBlogAuthMemberInfo(Blog blog) {
         return memberRepository.findByIdForBlogMain(blog.getMember().getId());
     }
 
-    public BlogInfoFormDto getMyBlogForm(String blogNm){
+    public BlogInfoFormDto getMyBlogForm(String blogNm) {
         BlogInfoFormDto blogInfoFormDto = blogRepository.findByBlogNmAndRepImgYn(blogNm, "Y");
-        if(blogInfoFormDto == null){
+        if (blogInfoFormDto == null) {
             blogInfoFormDto = new BlogInfoFormDto();
         }
         List<Topic> topicList = topicRepository.findAll();
@@ -89,23 +108,23 @@ public class BlogService {
         return blogInfoFormDto;
     }
 
-    public BlogFormDto getBlogForm(){
+    public BlogFormDto getBlogForm() {
         BlogFormDto blogFormDto = new BlogFormDto();
         List<Topic> topicList = topicRepository.findAll();
         blogFormDto.setTopicList(topicList);
         return blogFormDto;
     }
 
-    public List<BlogListDto> getMyBlogList(String email){
+    public List<BlogListDto> getMyBlogList(String email) {
         Member member = memberRepository.findByEmail(email);
         List<BlogListDto> blogList = blogRepository.findAllBlogDtoList(member.getId());
         return blogList;
     }
 
-    public Map<String, String> validateHandler(BindingResult bindingResult){
+    public Map<String, String> validateHandler(BindingResult bindingResult) {
         Map<String, String> validatorResult = new HashMap<>();
 
-        for(FieldError error : bindingResult.getFieldErrors()){
+        for (FieldError error : bindingResult.getFieldErrors()) {
             String validKeyName = String.format("valid_%s", error.getField());
             validatorResult.put(validKeyName, error.getDefaultMessage());
         }
@@ -113,7 +132,7 @@ public class BlogService {
     }
 
 
-    public BlogInfoFormDto getBlogInfo(String blogNm){
+    public BlogInfoFormDto getBlogInfo(String blogNm) {
         Blog blog = blogRepository.findByBlogNm(blogNm);
 //        BlogInfoFormDto blogInfoFormDto = blogImgRepository.findByBlogIdAndRepimgYn(blog.getId(), "Y");
         BlogInfoFormDto blogInfoFormDto = new BlogInfoFormDto();
@@ -121,19 +140,19 @@ public class BlogService {
         return blogInfoFormDto;
     }
 
-    public Blog updateBlogInfo(BlogInfoFormDto blogInfoFormDto, MultipartFile imgFiles) throws Exception{
+    public Blog updateBlogInfo(BlogInfoFormDto blogInfoFormDto, MultipartFile imgFiles) throws Exception {
         Blog blog = blogRepository.findById(blogInfoFormDto.getBlogId()).orElseThrow(EntityExistsException::new);
-        if(!imgFiles.isEmpty()){
+        if (!imgFiles.isEmpty()) {
             ImgDto imgDto;
             BlogImg blogImg;
-            ImgSaveTypeDto imgSaveTypeDto = new ImgSaveTypeDto(blog.getId(),"blog", blogInfoFormDto.getBlogNm());
+            ImgSaveTypeDto imgSaveTypeDto = new ImgSaveTypeDto(blog.getId(), "blog", blogInfoFormDto.getBlogNm());
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("blog", blog);
-            if(blogImgRepository.findByBlogIdAndRepimgYn(blog.getId(), "Y") != null){
+            if (blogImgRepository.findByBlogIdAndRepimgYn(blog.getId(), "Y") != null) {
                 blogImg = blogImgRepository.findById(blogInfoFormDto.getBlogId()).get();
                 imgDto = modelMapping(blogImg);
                 imgService.updateImg(imgDto, imgSaveTypeDto, imgFiles, map);
-            }else{
+            } else {
                 imgService.saveImg(imgSaveTypeDto, imgFiles, map);
             }
         }
@@ -142,9 +161,9 @@ public class BlogService {
         return blog;
     }
 
-    private ImgDto modelMapping(BlogImg blogImg){
-            ModelMapper modelMapper = new ModelMapper();
-            ImgDto imgDto = modelMapper.map(blogImg, ImgDto.class);
-            return imgDto;
+    private ImgDto modelMapping(BlogImg blogImg) {
+        ModelMapper modelMapper = new ModelMapper();
+        ImgDto imgDto = modelMapper.map(blogImg, ImgDto.class);
+        return imgDto;
     }
 }

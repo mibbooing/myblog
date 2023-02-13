@@ -16,6 +16,7 @@
 
 
 
+
     </style>
 </th:block>
 <th:block layout:fragment="script">
@@ -30,14 +31,15 @@
         });
 
 
+
     </script>
 </th:block>
 
 <div layout:fragment="content" class="blog-section">
 
-    <div class="item_list" th:object="${blogMainFormDto}">
-        <div th:each="postPreview : *{postList}" class="item">
-            <div th:if="${postPreview.previewContents} == null">
+    <div th:if="${!blogMainFormDto.postList.isEmpty()}" class="item_list" th:object="${blogMainFormDto}">
+        <div th:each="postPreview : *{postList}">
+            <div th:if="${postPreview.previewContents} == null" class="item">
                 <div class="info_post">
                     <div class="author">
                         <div class="info_author">
@@ -51,7 +53,7 @@
                     </div>
                 </div>
             </div>
-            <div th:unless="${postPreview.previewContents} == null">
+            <div th:unless="${postPreview.previewContents} == null"  class="item">
                 <div class="info_post">
                     <div class="author">
                         <div class="info_author">
@@ -65,11 +67,11 @@
                            th:text="${postPreview.previewContents}"></a>
                     </div>
                     <div class="comments">
-                                        <span class="like">공감
-                                            <em>횟수</em>
-                                        </span>
+<!--                                        <span class="like">공감-->
+<!--                                            <em>횟수</em>-->
+<!--                                        </span>-->
                         <span class="comments">댓글
-                                            <em>갯수</em>
+                                            <em th:text="${postPreview.commentCount}"></em>
                                         </span>
                     </div>
                 </div>
@@ -82,6 +84,30 @@
                 </div>
             </div>
         </div>
+
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!blogMainFormDto.postList.hasPrevious} ? 'disabled'">
+                <a class="page-link"
+                   th:href="'/blogs/main/'+@{${blogMainFormDto.blogNm}(page=${blogMainFormDto.postList.number-1})}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, blogMainFormDto.postList.totalPages-1)}"
+                th:classAppend="${page == blogMainFormDto.postList.number} ? 'active'"
+                class="page-item">
+                <a th:text="${page+1}" class="page-link"
+                   th:href="'/blogs/main/'+@{${blogMainFormDto.blogNm}(page=${page})}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!blogMainFormDto.postList.hasNext} ? 'disabled'">
+                <a class="page-link"
+                   th:href="'/blogs/main/'+@{${blogMainFormDto.blogNm}(page=${blogMainFormDto.postList.number+1})}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div th:unless="${!blogMainFormDto.postList.isEmpty()}" class="item-list empty-item-list justify-content-center">
+        작성된 게시물이 없습니다.
     </div>
 </div>
 </html>

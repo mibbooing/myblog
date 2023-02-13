@@ -1,6 +1,8 @@
 package com.example.myblog.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -8,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostPreviewDto {
     private Long postId;
 
@@ -29,19 +33,7 @@ public class PostPreviewDto {
 
     private String regTime;
 
-    public PostPreviewDto() {
-    }
-
-//    public PostPreviewDto(Long postId, String title, String content, int commentCount, int likeCount, Long postImgId, String postImgUrl, String postImgNm) {
-//        this.postId = postId;
-//        this.title = title;
-//        this.content = content;
-//        this.commentCount = commentCount;
-//        this.likeCount = likeCount;
-//        this.postImgId = postImgId;
-//        this.postImgUrl = postImgUrl;
-//        this.postImgNm = postImgNm;
-//    }
+    private Long commentCount;
 
     public PostPreviewDto(Long postId, String title, String contents, String previewContents, Long postImgId, String postImgUrl, String postImgNm, LocalDateTime regTime) {
         this.postId = postId;
@@ -52,5 +44,6 @@ public class PostPreviewDto {
         this.postImgUrl = postImgUrl;
         this.postImgNm = postImgNm;
         this.regTime = regTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+//        this.commentCount = commentCount;
     }
 }

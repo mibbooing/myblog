@@ -35,9 +35,17 @@ public class PostFormDto {
     public PostFormDto() {
     }
 
+    public void setPostForm(String blogNm, List<CategoryDto> categoryDtoList, List<PostStatus> postStatusList){
+        this.blogNm = blogNm;
+        this.categoryDtoList = categoryDtoList;
+        this.postStatusList = postStatusList;
+        this.postImgDtoList.add(new PostImgDto());
+    }
+
     public void setPostReadData(String email, PostDto postDto, Blog blog, List<CategoryDto> categoryDtoList, PostImgDto postImgDto){
         this.email = email;
         this.postDto = postDto;
+        this.blogNm = blog.getBlogNm();
         this.blog = blog;
         this.categoryDtoList = categoryDtoList;
         this.postImgDto = postImgDto;
