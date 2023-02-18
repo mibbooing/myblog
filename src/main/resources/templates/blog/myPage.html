@@ -327,7 +327,8 @@
                 <div class="blog-input-wrapper">
                     <div class="form-group">
                         <label th:for="blogNm">블로그 이름</label>
-                        <input type="text" th:value="${blogNm}" name="blogMyPageFormDto.blogNm" id="blogNm" class="form-control" placeholder="블로그 이름을 입력해주세요"
+                        <input type="hidden" th:field="*{blogNm}">
+                        <input type="text" th:value="${blogNm}" th:name="blogInfoFormDto.blogNm" id="blogNm" class="form-control" placeholder="블로그 이름을 입력해주세요"
                                disabled/>
                         <p th:text="${valid_blogNm}" class="fieldError"></p>
                     </div>

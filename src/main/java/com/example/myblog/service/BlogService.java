@@ -149,7 +149,7 @@ public class BlogService {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("blog", blog);
             if (blogImgRepository.findByBlogIdAndRepimgYn(blog.getId(), "Y") != null) {
-                blogImg = blogImgRepository.findById(blogInfoFormDto.getBlogId()).get();
+                blogImg = blogImgRepository.findById(blogInfoFormDto.getBlogImgId()).orElseThrow(() -> new EntityNotFoundException("ERR_BLOG_IMG_NOT_FOUND"));
                 imgDto = modelMapping(blogImg);
                 imgService.updateImg(imgDto, imgSaveTypeDto, imgFiles, map);
             } else {

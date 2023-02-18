@@ -79,7 +79,7 @@ public class AsyncRequestController {
         Date now = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         try {
-            File folder = fileService.makePath("C:/myblog/post/temp/" + sdf.format(now) + "/" + blogNm + "/");
+            File folder = fileService.makePath("/tmp/myblog/post/temp/" + sdf.format(now) + "/" + blogNm + "/");
             fileName = fileService.uploadFile(folder.getPath(), upload.getOriginalFilename(), upload.getBytes());
         } catch (Exception e) {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -104,8 +104,8 @@ public class AsyncRequestController {
         JsonObject obj = new JsonObject();
         try {
             Post emptyPost = postService.createPost(blogNm);
-            String reqTargetPath = "C:/myblog/post" + (String) paramMap.get("imgTempUrl");
-            String reqDestPath = "C:/myblog/post/" + blogNm + "/" + emptyPost.getId() + "/";
+            String reqTargetPath = "/tmp/myblog/post" + (String) paramMap.get("imgTempUrl");
+            String reqDestPath = "/tmp/myblog/post/" + blogNm + "/" + emptyPost.getId() + "/";
             fileService.replaceImgPath(reqTargetPath, reqDestPath);
             String imgUrl = "/images/post/" + blogNm + "/" + emptyPost.getId() + "/";
             System.out.println("PostId : " + imgUrl);
@@ -128,8 +128,8 @@ public class AsyncRequestController {
         try {
 //            Post emptyPost = postService.createPost(blogNm);
             Long postId = (Long) paramMap.get("imgTempUrl");
-            String reqTargetPath = "C:/myblog/post" + (String) paramMap.get("imgTempUrl");
-            String reqDestPath = "C:/myblog/post/" + blogNm + "/" + postId + "/";
+            String reqTargetPath = "/tmp/myblog/post" + (String) paramMap.get("imgTempUrl");
+            String reqDestPath = "/tmp/myblog/post/" + blogNm + "/" + postId + "/";
             fileService.replaceImgPath(reqTargetPath, reqDestPath);
             String imgUrl = "/images/post/" + blogNm + "/" + postId + "/";
             System.out.println("PostId : " + imgUrl);

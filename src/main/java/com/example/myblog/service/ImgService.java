@@ -82,7 +82,7 @@ public class ImgService {
                 }
                 String oriImgName = imgFile.getOriginalFilename();
                 String imgName = fileService.uploadFile(imgPath, oriImgName, imgFile.getBytes());
-                String imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgName;
+                String imgUrl = "/images/" + imgSaveTypeDto.getType() + "/" + imgSaveTypeDto.getName() + "/" +imgName;
                 imgDto.updateImgDto(imgName, oriImgName, imgUrl, "N");
 
                 updateExec(imgSaveTypeDto.getType(), imgDto, map);
