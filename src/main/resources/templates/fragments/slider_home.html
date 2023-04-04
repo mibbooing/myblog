@@ -1,0 +1,15 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="slider">
+    <div class="topic-wrap">
+        <ul class="topic-list" th:if="*{topicList} != null">
+            <li th:each="topic : ${topicList}">
+                <a th:href="@{/home(topicId=${topic.id})}" th:text="${topic.topicName}" th:if="${topic.id} == ${selectedTopic}" style="font-weight:bold;"></a>
+                <a th:href="@{/home(topicId=${topic.id})}" th:text="${topic.topicName}" th:unless="${topic.id} == ${selectedTopic}"></a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</html>

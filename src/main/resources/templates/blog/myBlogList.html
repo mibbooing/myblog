@@ -1,0 +1,12 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+    <section layout:fragment="content">
+        <ul th:each="blogList : ${blogList}">
+            <li th:text="${blogList.BlogNm}"></li>
+        </ul>
+    </section>
+
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_home}">
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            [# th:if="${errorMessage}"]
+                var errorMessage = [[${errorMessage}]];
+                if(errorMessage != null){
+                    alert(errorMessage);
+                }
+            [/]
+        });
+
+    </script>
+</th:block>
+
+
+<section layout:fragment="content" class="section">
+    <wrapper class="home-wrapper">
+        <div th:if="${!homePostPreviewDtoList.isEmpty()}" class="item_list">
+            <div th:each="postPreviewDto : ${homePostPreviewDtoList}" class="item">
+                <div class="info_post">
+                    <div class="author">
+                        <a th:href="'/blogs/main/'+${postPreviewDto.blogNm}">
+                            <div th:if="${postPreviewDto.blogImgUrl} != null" class="thumbnail_author">
+                                <img th:src="${postPreviewDto.blogImgUrl}"
+                                     alt="블로그 썸네일">
+                            </div>
+                            <div class="info_author">
+                                <em class="name_author" th:text="${postPreviewDto.blogNm}"></em>
+                                <span class="time" th:text="${postPreviewDto.regTime}"></span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="desc_post">
+                        <a th:href="'/posts/details/'+${postPreviewDto.postId}">
+                            <h1 class="desc_title" th:text="${postPreviewDto.title}"></h1>
+                            <div class="desc_text" th:text="${postPreviewDto.previewContents}"></div>
+                        </a>
+                    </div>
+                    <div class="comments">
+<!--                                <span class="like">공감-->
+<!--                                    <em>횟수</em>-->
+<!--                                </span>-->
+                        <span class="comments">댓글
+                                    <em th:text="${postPreviewDto.commentCount}">갯수</em>
+                                </span>
+                    </div>
+                </div>
+                <div th:if="${postPreviewDto.postImgUrl}" class="thumbnail_post">
+                    <div class="thumbnail_area">
+                        <a th:href="'/posts/details/'+${postPreviewDto.postId}" class="thumbnail_inner">
+                            <img th:src="${postPreviewDto.postImgUrl}"
+                                 alt="게시물 대표 이미지">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${!homePostPreviewDtoList.hasPrevious} ? 'disabled'">
+                    <a class="page-link" th:href="@{/home(topicId=${selectedTopic}, page=${homePostPreviewDtoList.number-1})}">
+                        <span>이전</span>
+                    </a>
+                </li>
+                <li th:each="page: ${#numbers.sequence(0, homePostPreviewDtoList.totalPages-1)}"
+                    th:classAppend="${page == homePostPreviewDtoList.number} ? 'active'"
+                    class="page-item">
+                    <a th:text="${page+1}" class="page-link" th:href="@{/home(topicId=${selectedTopic}, page=${page})}"></a>
+
+                </li>
+                <li class="page-item" th:classappend="${!homePostPreviewDtoList.hasNext} ? 'disabled'">
+                    <a class="page-link" th:href="@{/home(topicId=${selectedTopic}, page=${homePostPreviewDtoList.number+1})}">
+                        <span>다음</span>
+                    </a>
+                </li>
+            </ul>
+            <!--            <div class="item">-->
+            <!--                <div class="info_post">-->
+            <!--                    <div class="author">-->
+            <!--                        <a href="author_blog_link"></a>-->
+            <!--                        <div class="thumbnail_author">-->
+            <!--                            <img src="https://pbs.twimg.com/profile_images/1173873201039806464/R1lWiNES_400x400.jpg"-->
+            <!--                                 alt="블로거 썸네일">-->
+            <!--                        </div>-->
+            <!--                        <div class="info_author">-->
+            <!--                            <em class="name_author">홍길동</em>-->
+            <!--                            <span class="time">1시간전</span>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="desc_post">-->
+            <!--                        <a href="post_link" class="desc_title" value="title">이것은 제목이다</a>-->
+            <!--                        <a href="post_link" class="desc_text" value="post_text">이 이야기는 영국의 런던으로부터 시작되어 어쩌구 저쩌구 이러쿵 저러쿵-->
+            <!--                            조잘조잘 속닥속닥 수근이수근 이런얘기인데 사실 다도 그냥 채우려고 쓰는거지 아무 뜻이 없다람뒤썬더볼트랙터미널뛰기름칠월칠석가모니불상팔자식자랑 가나다라마바사아자차가타파하-->
+            <!--                            나랏말싸미 듕귁에 달아 문자와 서로 사맞디아니할세 이런젼탸로 내 어른백성을 위해 새로 스물여섯글자를 맹그노리</a>-->
+            <!--                    </div>-->
+            <!--                    <div class="comments">-->
+            <!--                                                <span class="like">공감-->
+            <!--                                                    <em>횟수</em>-->
+            <!--                                                </span>-->
+            <!--                        <span class="comments">댓글-->
+            <!--                                                    <em>갯수</em>-->
+            <!--                                                </span>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="thumbnail_post">-->
+            <!--                    <div class="thumbnail_area">-->
+            <!--                        <a href="post_link" class="thumbnail_inner">-->
+            <!--                            <img src="https://pbs.twimg.com/profile_images/1173873201039806464/R1lWiNES_400x400.jpg"-->
+            <!--                                 alt="">-->
+            <!--                        </a>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+        </div>
+        <div th:unless="${!homePostPreviewDtoList.isEmpty()}" class="item-list empty-item-list justify-content-center">
+            추천게시물이 없습니다.
+        </div>
+    </wrapper>
+</section>
+
+</html>

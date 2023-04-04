@@ -1,0 +1,16 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block layout:fragmemt="script">
+    <script th:inline="javascript">
+        window.onload = () =>{
+            [# th:if="${errorMessage}"]
+                var errorMessage = [[${errorMessage}]];
+                var url = [[${url}]];
+            [/]
+            alert(errorMessage);
+            location.href = url;
+        }
+    </script>
+</th:block>
+</html>

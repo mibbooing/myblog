@@ -1,0 +1,90 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    margin: 0;
+    padding: 0;
+}
+header {
+    width: max;
+    height: 400px;
+    top: 0;
+    background-color: #D1CFCF;
+}
+main {
+    width: max;
+    min-height: 300px;
+    display: flex;
+    justify-content:center;
+}
+section {
+    float: left;
+    min-width: 640px;
+    background-color: #F2FFff;
+    word-break:break-all;
+}
+aside {
+    background-color: #F2FFB5;
+    min-width: 300px;
+    margin-left: 80px;
+    float: left;
+}
+footer {
+    bottom: 0;
+    background-color: #F7DBDB;
+}
+
+.btn_menu{
+    display: none;
+}
+
+#member-header{
+    background-color : red;
+}
+.overlay {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    top:0;
+    display: none;
+}
+
+
+
+@media screen and ( max-width: 1020px ) {
+  body {
+      min-width:150px;
+      color: red;
+  }
+  section {
+      width: 100%;
+      min-width:150px;
+      background-color: #F2FFff;
+      padding-left: 20px;
+      padding-right: 20px;
+  }
+  .area-aside {
+      position: fixed;
+      height: 100%;
+      top: 0;
+      right: -100%;
+      max-width: 380px;
+      z-index: 999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s;
+  }
+  .action{
+      right: 0;
+  }
+  .btn_menu{
+      display: inline-block;
+      position: fixed;
+      right:0;
+      top:0;
+  }
+}

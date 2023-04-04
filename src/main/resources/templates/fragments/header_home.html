@@ -1,0 +1,29 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<header th:fragment="header">
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <button type="button" class="btn_home btn_none-style" onclick="location.href='/'">
+                <i class="bi bi-house"></i>
+            </button>
+            <button type="button" class="btn_home_menu btn_none-style">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+        <ul class="navbar_menu">
+            <li sec:authorize="isAnonymous()">
+                <a href="/members/login">로그인</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <a href="/members/myPage">마이페이지</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <a href="/members/logout">로그아웃</a>
+            </li>
+        </ul>
+    </nav>
+
+</header>
+
+</html>
